@@ -4,6 +4,7 @@ from pprint import pprint
 
 vertex_list = []
 current_color = (255,255,255)
+color_list = []
 
 def get_commands_from_input(f_path):
      # get all commands from input file
@@ -54,6 +55,7 @@ def execute_commands(command):
             if (r_x <width and r_y<height):
                 # print("PIXEL PUT: ",)
                 image.im.putpixel((r_x,r_y), (*current_color, 255))
+                color_list.append(current_color)
             vertex_list.append((x,y,z,w,(pixel_coordinate_x, pixel_coordinate_y)))
             # print("pixel_coordinate: ", pixel_coordinate)
             image.save(recent_open_image_name)
@@ -61,6 +63,19 @@ def execute_commands(command):
         if command[0] == "rgb":
             current_color = tuple([int(x) for x in command[1:]])
             print("current color update: ",current_color)
+            
+        if command[0] == "tri":
+            v1, v2 ,v3 = [int(x) for x in command[1:]]
+            print("triangle: ",v1,v2,v3)
+            # if positive (do -1) - offset for 0 index in python lists
+            if v1 > 0:
+                v1 -=1
+            if v2 > 0:
+                v2 -=1
+            if v3 > 0:
+                v3-=1
+            tri_vertices = [vertex_list[v1],vertex_list[v2],vertex_list[v3]]
+            print("tri_vertices: ",tri_vertices)
             
     recent_open_image_name = None
     return image
@@ -74,7 +89,7 @@ if __name__=="__main__":
         f_path = argv[1]
         
     commands = get_commands_from_input(f_path)
-    print("COMMANDS: ", commands)
+    # print("COMMANDS: ", commands)
     
     image = execute_commands(commands)
     print("vertex_list: ",vertex_list)
