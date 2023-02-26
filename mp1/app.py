@@ -1,6 +1,7 @@
 from sys import argv
 from PIL import Image
 from pprint import pprint
+import math
 
 vertex_list = []
 current_color = (255,255,255)
@@ -36,6 +37,45 @@ def create_image_rgb(w, h, output_file_name):
 def round_coordinates(x,y):
     return round(x),round(y)
 
+# difference betweek two vectors
+def difference(vec1, vec2):
+    return [a_i - b_i for a_i, b_i in zip(list(vec1), list(vec2))]
+
+# addition betweek two vectors
+def addition(vec1, vec2):
+    return [a_i + b_i for a_i, b_i in zip(list(vec1), list(vec2))]
+
+# divide betweek vectors and scalar
+def divide_scalar(vec, scalar):
+    return [a_i/scalar for a_i in vec]
+
+# multiply betweek vectors and scalar
+def product_scalar(vec, scalar):
+    return [a_i*scalar for a_i in vec]
+
+def DDA(point1,point2,d):
+    v1, v2 = list(point1[4]), list(point2[4])
+    # print(v1,v2 ,"hiß")
+    points = []
+    # points overlap in direction of the dimensioin to step in
+    if (v1[d] == v2[d]):
+        return points
+    elif (v1[d] > v2[d]):
+        v1, v2 = v2, v1
+    # print("v2:",v2)
+    del_vector = difference(v2,v1)
+    # print("del: ",del_vector)
+    d_vector = divide_scalar(del_vector,del_vector[d])
+    o_vector = product_scalar(d_vector, math.ceil(v1[d]) - v1[d])
+    # print("o: ",o_vector)
+    p = addition(v1,o_vector)
+    # print("p: ",p)
+    while(p[d] < v2[d]):
+        points.append(p)
+        p = addition(p, d_vector)
+    return points
+    
+
 # constructing the image
 def execute_commands(command):
     global current_color
@@ -66,6 +106,7 @@ def execute_commands(command):
             
         if command[0] == "tri":
             v1, v2 ,v3 = [int(x) for x in command[1:]]
+            width, height = image.size
             print("triangle: ",v1,v2,v3)
             # if positive (do -1) - offset for 0 index in python lists
             if v1 > 0:
@@ -75,7 +116,15 @@ def execute_commands(command):
             if v3 > 0:
                 v3-=1
             tri_vertices = [vertex_list[v1],vertex_list[v2],vertex_list[v3]]
+            
+            # do scanline for v1,v2 -> find points. v1,v3 -> find points. use points found from prev 2 lines to create lines and find points along them.
+            dda_result = DDA( tri_vertices[0], tri_vertices[1],1)
+            for point in dda_result:
+                if (point[0] <width and point[1]<height):
+                    image.im.putpixel((round(point[0]),round(point[1])), (*current_color, 255))
+            image.save((recent_open_image_name))
             print("tri_vertices: ",tri_vertices)
+            print("dda_result: ", dda_result)
             
     recent_open_image_name = None
     return image
