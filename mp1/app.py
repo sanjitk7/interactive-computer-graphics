@@ -54,6 +54,7 @@ def product_scalar(vec, scalar):
     return [a_i*scalar for a_i in vec]
 
 def DDA(point1,point2,d):
+    print("points: ", point1, point2)
     v1, v2 = list(point1[4]), list(point2[4])
     # print(v1,v2 ,"hiß")
     points = []
@@ -74,8 +75,35 @@ def DDA(point1,point2,d):
         points.append(p)
         p = addition(p, d_vector)
     return points
-    
 
+def Scanline(point1, point2, point3):
+
+    points = []
+    edge1 = DDA(point1,point2,1)
+    edge2 = DDA(point2,point3,1)
+    edge3 = DDA(point1,point3,1)
+    edges = [edge1, edge2, edge3]
+    print("\nlist of edges and lengths: ",edges, len(edge1), len(edge2), len(edge3))
+    
+    # taking smallest two edges
+    edges = sorted(edges, key = lambda edge: len(edge))
+    print("\n length sorted list of edges: ",edges)
+    
+    two_edges = edges[0] + edges[1]
+    print("\ntwo_edges: ",two_edges, len(two_edges))
+    
+    two_edges = sorted(two_edges, key = lambda point: point[1])
+    # print("\ntwo_edges points sorted by step direction: ",two_edges, len(two_edges))
+    
+    
+    for i, point in enumerate(edges[2]):
+        print("3rd side edge point:", point,i)
+        # step in x to find all possible pixels while stepping in y a the other edges
+        inside_line = DDA([None,None,None,None,point], [None,None,None,None,two_edges[i]],0)
+        for p in inside_line:
+            points.append(p)
+    return points
+    
 # constructing the image
 def execute_commands(command):
     global current_color
@@ -118,13 +146,19 @@ def execute_commands(command):
             tri_vertices = [vertex_list[v1],vertex_list[v2],vertex_list[v3]]
             
             # do scanline for v1,v2 -> find points. v1,v3 -> find points. use points found from prev 2 lines to create lines and find points along them.
-            dda_result = DDA( tri_vertices[0], tri_vertices[1],1)
-            for point in dda_result:
+            scanline_result = Scanline(tri_vertices[0], tri_vertices[1], tri_vertices[2])
+            
+            print("tri_vertices: ",tri_vertices)
+            print("scanline_result: ", scanline_result)
+            
+            print("ignored due to out of bounds: ", end="")
+            for point in scanline_result:
                 if (point[0] <width and point[1]<height):
                     image.im.putpixel((round(point[0]),round(point[1])), (*current_color, 255))
+                else:
+                    print(point, end=",")
+            # image.show(recent_open_image_name)
             image.save((recent_open_image_name))
-            print("tri_vertices: ",tri_vertices)
-            print("dda_result: ", dda_result)
             
     recent_open_image_name = None
     return image
