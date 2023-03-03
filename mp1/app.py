@@ -55,7 +55,7 @@ def product_scalar(vec, scalar):
 
 
 def DDA(point1,point2,d):
-    print("points: ", point1, point2)
+    # print("points: ", point1, point2)
     v1, v2 = list(point1[4]), list(point2[4])
     # print(v1,v2 ,"hiß")
     points = []
@@ -84,24 +84,24 @@ def scanline(point1, point2, point3):
     edge2 = DDA(point2,point3,1)
     edge3 = DDA(point1,point3,1)
     edges = [edge1, edge2, edge3]
-    print("\nlist of edges and lengths: ",edges, len(edge1), len(edge2), len(edge3))
+    # print("\nlist of edges and lengths: ",edges, len(edge1), len(edge2), len(edge3))
     
     # taking smallest two edges
     edges = sorted(edges, key = lambda edge: len(edge))
-    print("\n length sorted list of edges: ",edges)
+    # print("\n length sorted list of edges: ",edges)
     
     two_edges = edges[0] + edges[1]
-    print("\ntwo_edges: ",two_edges, len(two_edges))
+    # print("\ntwo_edges: ",two_edges, len(two_edges))
     
     two_edges = sorted(two_edges, key = lambda point: point[1])
     # print("\ntwo_edges points sorted by step direction: ",two_edges, len(two_edges))
     
     
     for i, point in enumerate(edges[2]):
-        print("3rd side edge point:", point,i)
+        # print("3rd side edge point:", point,i)
         # step in x to find all possible pixels while stepping in y a the other edges
         inside_line = DDA([None,None,None,None,point], [None,None,None,None,two_edges[i]],0)
-        print("inside_line: ",inside_line)
+        # print("inside_line: ",inside_line)
         for p in inside_line:
             points.append(p)
     return points
@@ -116,8 +116,8 @@ def interpolation_color(vertex_color_list, point, og_vertex):
     w_1=(((v2[1]-v3[1])*(point[0]-v3[0]))+((v3[0]-v2[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
     w_2=(((v3[1]-v1[1])*(point[0]-v3[0]))+((v1[0]-v3[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
     w_3=1-w_1-w_2
-    print("ve color:",vertex_color_list)
-    print("ve: ",og_vertex)
+    # print("ve color:",vertex_color_list)
+    # print("ve: ",og_vertex)
     r=int(vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2+vertex_color_list[2][0]*w_3)
     g=int(vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2+vertex_color_list[2][1]*w_3)
     b=int(vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2+vertex_color_list[2][2]*w_3)
@@ -178,11 +178,11 @@ def execute_commands(command):
             print("tri_vertices: ",tri_vertices)
             print("scanline_result: ", scanline_result)
             
-            print("ignored due to out of bounds: ", end="")
+            # print("ignored due to out of bounds: ", end="")
             for point in scanline_result:
                 if (point[0] <width and point[1]<height):
-                    current_color = interpolation_color(tri_vertices_colors, point, tri_vertices)
-                    image.im.putpixel((round(point[0]),round(point[1])), (*current_color, 255))
+                    put_color = interpolation_color(tri_vertices_colors, point, tri_vertices)
+                    image.im.putpixel((round(point[0]),round(point[1])), (*put_color, 255))
                 else:
                     print(point, end=",")
             # image.show(recent_open_image_name)
@@ -204,6 +204,7 @@ if __name__=="__main__":
     
     image = execute_commands(commands)
     print("vertex_list: ",vertex_list)
+    print("vertex_colors_list: ",vertex_colors_list)
     
     
     
