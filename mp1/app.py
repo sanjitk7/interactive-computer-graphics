@@ -3,13 +3,20 @@ from PIL import Image
 from pprint import pprint
 import math
 
+# POINT: [x,y,z,w, (x_calc, y_calc)]
+
+# Global Data Structures
 vertex_list = []
 current_color = (255,255,255)
 vertex_colors_list = []
+# render_points = []
+isDepth = False
+depth_buffer = {}
+
 
 def get_commands_from_input(f_path):
      # get all commands from input file
-    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb"]
+    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb", "depth"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -106,45 +113,85 @@ def scanline(point1, point2, point3):
             points.append(p)
     return points
     
+
+# def render_image():
+#     global render_points
+#     width, height = image.size
+#     # image library plots the pixels
+#     for point in render_points:
+#         if (point[0] <width and point[1]<height):
+#             put_color = interpolation_color(tri_vertices_colors, point, tri_vertices)
+#             image.im.putpixel((round(point[0]),round(point[1])), (*put_color, 255))
+#         else:
+#             print(point, end=",")
+#     # image.show(recent_open_image_name)
+#     image.save((recent_open_image_name))
     
 # interpolation
-def interpolation_color(vertex_color_list, point, og_vertex):
-    # global current_color
-    v1=og_vertex[0][4]
-    v2=og_vertex[1][4]
-    v3=og_vertex[2][4]
-    w_1=(((v2[1]-v3[1])*(point[0]-v3[0]))+((v3[0]-v2[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
-    w_2=(((v3[1]-v1[1])*(point[0]-v3[0]))+((v1[0]-v3[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
-    w_3=1-w_1-w_2
+def interpolation_color(vertex_color_list, point, tri_vertices):
+    global isDepth
+    
+    v1= (*tri_vertices[0][4], tri_vertices[0][2],  tri_vertices[0][3])
+    v2= (*tri_vertices[1][4], tri_vertices[1][2],  tri_vertices[1][3])
+    v3= (*tri_vertices[2][4], tri_vertices[2][2],  tri_vertices[2][3])
+    
+    w_1 = (((v2[1]-v3[1])*(point[0]-v3[0]))+((v3[0]-v2[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
+    w_2 = (((v3[1]-v1[1])*(point[0]-v3[0]))+((v1[0]-v3[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
+    w_3 = 1-w_1-w_2
     # print("ve color:",vertex_color_list)
     # print("ve: ",og_vertex)
-    r=int(vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2+vertex_color_list[2][0]*w_3)
-    g=int(vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2+vertex_color_list[2][1]*w_3)
-    b=int(vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2+vertex_color_list[2][2]*w_3)
-    # current_color = [r,g,b]
-    return r,g,b
+    
+    r = int(vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2+vertex_color_list[2][0]*w_3)
+    g = int(vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2+vertex_color_list[2][1]*w_3)
+    b = int(vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2+vertex_color_list[2][2]*w_3)
+    
+    
+    # interpolate w and z values - also attach a flag to deal with 'depth' keyword
+    okToPutPixel = True
+    
+    if isDepth:
+        print("point: ",point)
+        if tuple(point) in depth_buffer:
+            z = w_1*v1[2]+w_2*v2[2]+w_3*v3[2]
+            w = w_1*v1[3]+w_2*v2[3]+w_3*v3[3]
+            val = z/w
+
+            if val > depth_buffer[point] and val > -1:
+                okToPutPixel = False
+            else:
+                depth_buffer[point] = val
+            
+    
+    return r,g,b,okToPutPixel
 
     
 # constructing the image
 def execute_commands(command):
     global current_color
     global vertex_colors_list
+    global isDepth
+    # global render_points
+    global depth_buffer
     for command in commands:
         if command[0] == "png":
             recent_open_image_name = command[3]
             image = create_image_rgb(int(command[1]), int(command[2]), recent_open_image_name)
         
+        if command[0] == "depth":
+            isDepth = True
+            width, height = image.size
+            # initializing depth to be 1
+            for i in range(width):
+                for j in range(height):
+                    depth_buffer[(i,j)] = 1
+                    
         # creating pixel coordinates from (xyzw)            
         if command[0] == "xyzw":
             # print("command at xyzw: ",command)
             x, y, z, w = [float(i) for i in command[1:]]
             width, height = image.size
             pixel_coordinate_x,pixel_coordinate_y = (((x/w)+1)*(width/2),(((y/w)+1)*(height/2)))
-            # print("pixel_coordinate to plot xyzw: ", round(pixel_coordinate_x), round(pixel_coordinate_y))
-            # r_x, r_y = round_coordinates(pixel_coordinate_x, pixel_coordinate_y)
-            # # if (r_x <width and r_y<height):
-            # #     # print("PIXEL PUT: ",)
-            # #     image.im.putpixel((r_x,r_y), (*current_color, 255))
+            
             vertex_list.append((x,y,z,w,(pixel_coordinate_x, pixel_coordinate_y)))
             vertex_colors_list.append(current_color)
             # print("pixel_coordinate: ", pixel_coordinate)
@@ -159,6 +206,7 @@ def execute_commands(command):
             v1, v2 ,v3 = [int(x) for x in command[1:]]
             width, height = image.size
             print("triangle: ",v1,v2,v3)
+            
             # if positive (do -1) - offset for 0 index in python lists
             if v1 > 0:
                 v1 -=1
@@ -176,17 +224,32 @@ def execute_commands(command):
             scanline_result = scanline(tri_vertices[0], tri_vertices[1], tri_vertices[2])
             
             print("tri_vertices: ",tri_vertices)
-            print("scanline_result: ", scanline_result)
+            # print("scanline_result: ", scanline_result)
             
-            # print("ignored due to out of bounds: ", end="")
+            
+            # image library plots the pixels
             for point in scanline_result:
+                
+                
+                # # check for z/w lesser than stored depth value
+                # depth_update_ok = False
+                
+                # if isDepth:
+                #     point[2]
+                
                 if (point[0] <width and point[1]<height):
-                    put_color = interpolation_color(tri_vertices_colors, point, tri_vertices)
-                    image.im.putpixel((round(point[0]),round(point[1])), (*put_color, 255))
+                    interpolation_result = interpolation_color(tri_vertices_colors, tuple(point), tri_vertices)
+                    # print("interpolation_result: ",interpolation_result)
+                    put_color = interpolation_result[0:3]
+                    isOkToPutPixel = interpolation_result[3]
+                    if isOkToPutPixel:
+                        image.im.putpixel((round(point[0]),round(point[1])), (*put_color, 255))
                 else:
                     print(point, end=",")
             # image.show(recent_open_image_name)
             image.save((recent_open_image_name))
+            
+            # render_points = render_points + scanline_result
             
     recent_open_image_name = None
     return image
@@ -203,6 +266,7 @@ if __name__=="__main__":
     # print("COMMANDS: ", commands)
     
     image = execute_commands(commands)
+    # image = render_image()
     print("vertex_list: ",vertex_list)
     print("vertex_colors_list: ",vertex_colors_list)
     
