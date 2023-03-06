@@ -11,12 +11,13 @@ current_color = (255,255,255)
 vertex_colors_list = []
 # render_points = []
 isDepth = False
+issRGB = False
 depth_buffer = {}
 
 
 def get_commands_from_input(f_path):
      # get all commands from input file
-    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb", "depth"]
+    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb", "depth","sRGB"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -113,19 +114,29 @@ def scanline(point1, point2, point3):
             points.append(p)
     return points
     
+# Gamma Correction: LStorage converted to LDisplay
+def sRGB_to_linear(rGBcolors):
+    linear_colors = []
+    for color in rGBcolors:
+        color_scaled = color
+        # color_scaled = color/255
+        if color_scaled <= 0.04045:
+            linear_colors.append(color_scaled/12.92)
+        else:
+            linear_colors.append(((color_scaled + 0.055)/1.055)**2.4)
+    print("sRGB to linear color: ",linear_colors)
+    return linear_colors
 
-# def render_image():
-#     global render_points
-#     width, height = image.size
-#     # image library plots the pixels
-#     for point in render_points:
-#         if (point[0] <width and point[1]<height):
-#             put_color = interpolation_color(tri_vertices_colors, point, tri_vertices)
-#             image.im.putpixel((round(point[0]),round(point[1])), (*put_color, 255))
-#         else:
-#             print(point, end=",")
-#     # image.show(recent_open_image_name)
-#     image.save((recent_open_image_name))
+# Gamma Correction:  LDisplay converted to LStorage
+def linear_to_sRGB(linear_colors):
+    sRGB = []
+    for color in linear_colors:
+        if color <= 0.0031308:
+            sRGB.append(color*12.92)
+        else:
+            sRGB.append((color**(1/2.4)*1.055) - 0.055)
+    print("sRGB: ",sRGB)
+    return sRGB
     
 # interpolation
 def interpolation_color(vertex_color_list, point, tri_vertices):
@@ -141,16 +152,16 @@ def interpolation_color(vertex_color_list, point, tri_vertices):
     # print("ve color:",vertex_color_list)
     # print("ve: ",og_vertex)
     
-    r = int(vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2+vertex_color_list[2][0]*w_3)
-    g = int(vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2+vertex_color_list[2][1]*w_3)
-    b = int(vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2+vertex_color_list[2][2]*w_3)
+    r = vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2+vertex_color_list[2][0]*w_3
+    g = vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2+vertex_color_list[2][1]*w_3
+    b = vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2+vertex_color_list[2][2]*w_3
     
     
     # interpolate w and z values - also attach a flag to deal with 'depth' keyword
     okToPutPixel = True
     
     if isDepth:
-        print("point: ",point)
+        # print("point: ",point)
         if tuple(point) in depth_buffer:
             z = w_1*v1[2]+w_2*v2[2]+w_3*v3[2]
             w = w_1*v1[3]+w_2*v2[3]+w_3*v3[3]
@@ -170,6 +181,7 @@ def execute_commands(command):
     global current_color
     global vertex_colors_list
     global isDepth
+    global issRGB
     # global render_points
     global depth_buffer
     for command in commands:
@@ -184,6 +196,9 @@ def execute_commands(command):
             for i in range(width):
                 for j in range(height):
                     depth_buffer[(i,j)] = 1
+        
+        if command[0] == "sRGB":
+            issRGB = True
                     
         # creating pixel coordinates from (xyzw)            
         if command[0] == "xyzw":
@@ -193,7 +208,17 @@ def execute_commands(command):
             pixel_coordinate_x,pixel_coordinate_y = (((x/w)+1)*(width/2),(((y/w)+1)*(height/2)))
             
             vertex_list.append((x,y,z,w,(pixel_coordinate_x, pixel_coordinate_y)))
-            vertex_colors_list.append(current_color)
+            
+            # issRGB = False
+            if issRGB:
+                print("sRGB vertex color!")
+                linear_colors = sRGB_to_linear(list(current_color))
+                print("colors->linear_colors: ",current_color,"->",linear_colors)
+                vertex_colors_list.append(tuple(linear_colors))
+            else:
+                vertex_colors_list.append(current_color)
+            
+            
             # print("pixel_coordinate: ", pixel_coordinate)
             image.save(recent_open_image_name)
         
@@ -243,7 +268,12 @@ def execute_commands(command):
                     put_color = interpolation_result[0:3]
                     isOkToPutPixel = interpolation_result[3]
                     if isOkToPutPixel:
-                        image.im.putpixel((round(point[0]),round(point[1])), (*put_color, 255))
+                        if issRGB:
+                            print("put_color srgb: ",put_color)
+                            # sRGB = linear_to_sRGB()
+                            image.im.putpixel((round(point[0]),round(point[1])), (linear_to_sRGB(put_color[0])*255,linear_to_sRGB(put_color[1])*255,linear_to_sRGB(put_color[2])*255, 255))
+                        else:
+                            image.im.putpixel((round(point[0]),round(point[1])), (int(put_color[0]),int(put_color[1]),int(put_color[2]), 255))
                 else:
                     print(point, end=",")
             # image.show(recent_open_image_name)
