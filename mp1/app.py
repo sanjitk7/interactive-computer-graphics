@@ -1,6 +1,7 @@
 from sys import argv
 from PIL import Image
 from pprint import pprint
+import numpy as np
 import math
 
 # POINT: [x,y,z,w, (x_calc, y_calc)]
@@ -12,12 +13,14 @@ vertex_colors_list = []
 # render_points = []
 isDepth = False
 issRGB = False
+# isHyp = False
+isCull = False
 depth_buffer = {}
 
 
 def get_commands_from_input(f_path):
      # get all commands from input file
-    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb", "depth","sRGB"]
+    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb", "depth","sRGB","cull"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -136,6 +139,10 @@ def linear_to_sRGB(linear_colors):
             sRGB.append((color**(1/2.4)*1.055) - 0.055)
     return sRGB
     
+# convert x,y,z,w to hyperbolic normalized version
+# def hyperbolic_conversion(x,y,z,w):
+#     return (x/w,y/w,z/w,1/w)
+
 # interpolation
 def interpolation_color(vertex_color_list, point, tri_vertices):
     global isDepth
@@ -148,17 +155,21 @@ def interpolation_color(vertex_color_list, point, tri_vertices):
     w_1 = (((v2[1]-v3[1])*(point[0]-v3[0]))+((v3[0]-v2[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
     w_2 = (((v3[1]-v1[1])*(point[0]-v3[0]))+((v1[0]-v3[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
     w_3 = 1-w_1-w_2
+    
     # print("ve color:",vertex_color_list)
     # print("ve: ",og_vertex)
-    
-    # if issRGB:
-    #     vertex_color_list = []
     
     # print("color_triangle_vertex: ", vertex_color_list)
     r = vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2+vertex_color_list[2][0]*w_3
     g = vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2+vertex_color_list[2][1]*w_3
     b = vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2+vertex_color_list[2][2]*w_3
     
+    # if isHyp:
+    #     w = (1/v1[3])*w_1+(1/v2[3])*w_2+(1/v3[3])*w_3
+    #     r = (r/w)
+    #     g = (g/w)
+    #     b = (b/w)
+        
     
     # interpolate w and z values - also attach a flag to deal with 'depth' keyword
     okToPutPixel = True
@@ -185,6 +196,8 @@ def execute_commands(command):
     global vertex_colors_list
     global isDepth
     global issRGB
+    global isCull
+    # global isHyp
     # global render_points
     global depth_buffer
     for command in commands:
@@ -202,20 +215,34 @@ def execute_commands(command):
         
         if command[0] == "sRGB":
             issRGB = True
-                    
+            
+        # if command[0] == "hyp":
+        #     isHyp = True
+        
+        if command[0] == "cull":
+            isCull = True
+        
         # creating pixel coordinates from (xyzw)            
         if command[0] == "xyzw":
             # print("command at xyzw: ",command)
             x, y, z, w = [float(i) for i in command[1:]]
             width, height = image.size
+            
+            # if isHyp:
+            #     x, y, z, w = hyperbolic_conversion(x, y, z, w)
+            
+            # view port transformation
             pixel_coordinate_x,pixel_coordinate_y = (((x/w)+1)*(width/2),(((y/w)+1)*(height/2)))
             
             vertex_list.append((x,y,z,w,(pixel_coordinate_x, pixel_coordinate_y)))
             
             # issRGB = False
             if issRGB:
-                # print("sRGB vertex color!")
                 scaled_current_color = [int(x)/255 for x in list(current_color)]
+                
+                # if isHyp: # we convert r,g,b to also hyperbolic version
+                #     scaled_current_color = [(x/255)/w for x in list(current_color)]
+                
                 linear_colors_vertex = sRGB_to_linear(scaled_current_color)
                 # print("colors->linear_color for vertex storage: ",current_color,"->",linear_colors_vertex)
                 vertex_colors_list.append(tuple(linear_colors_vertex))
@@ -247,8 +274,23 @@ def execute_commands(command):
             tri_vertices = [vertex_list[v1],vertex_list[v2],vertex_list[v3]]
             tri_vertices_colors = [vertex_colors_list[v1],vertex_colors_list[v2],vertex_colors_list[v3]]
             
-            # sorted_tri_vertices = sorted(tri_vertices, key=lambda x: x[4][1])
+            # sort vertices based on y coordinate
+            sorted_tri_vertices = sorted(tri_vertices, key=lambda x: x[4][1])
             
+            # check if vertices are in counter-clockwise order.
+            if isCull:
+                v1_x, v1_y, v1_z = sorted_tri_vertices[0][4][0],sorted_tri_vertices[0][4][1],sorted_tri_vertices[0][2]
+                v2_x, v2_y, v2_z = sorted_tri_vertices[1][4][0],sorted_tri_vertices[1][4][1],sorted_tri_vertices[1][2]
+                v3_x, v3_y, v3_z = sorted_tri_vertices[2][4][0],sorted_tri_vertices[2][4][1],sorted_tri_vertices[2][2]
+                edge_1 = [v2_x-v1_x, v2_y-v1_y, v2_z-v1_z]
+                edge_2 = [v3_x-v1_x, v3_y-v1_y, v3_z-v1_z]
+                print(edge_1)
+                vector_cross_product = np.cross(edge_1, edge_2)
+                
+                print("Vector Cross Product: ", vector_cross_product)
+                if vector_cross_product[2] > 0:
+                    # skip this triangle plot
+                    continue
             # do scanline for v1,v2 -> find points. v1,v3 -> find points. use points found from prev 2 lines to create lines and find points along them.
             scanline_result = scanline(tri_vertices[0], tri_vertices[1], tri_vertices[2])
             
@@ -258,13 +300,6 @@ def execute_commands(command):
             
             # image library plots the pixels
             for point in scanline_result:
-                
-                
-                # # check for z/w lesser than stored depth value
-                # depth_update_ok = False
-                
-                # if isDepth:
-                #     point[2]
                 
                 if (point[0] <width and point[1]<height):
                     interpolation_result = interpolation_color(tri_vertices_colors, tuple(point), tri_vertices)
