@@ -1,5 +1,5 @@
 from PIL import Image, ImageChops
-
+import sys
 point_table = ([0] + ([255] * 255))
 
 def black_or_b(a, b):
@@ -10,7 +10,7 @@ def black_or_b(a, b):
     new.paste(b, mask=diff)
     return new
 
-a = Image.open('mp1indexing.png')
-b = Image.open('mp1indexing_correct.png')
+a = Image.open(sys.argv[1])
+b = Image.open(sys.argv[2])
 c = black_or_b(a, b)
-c.save('c.png')
+c.save('check_diff.png')
