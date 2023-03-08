@@ -154,25 +154,22 @@ def interpolation_color_tri(vertex_color_list, point, tri_vertices):
     global isRGBA
     global color_buffer
     
-    v1= (*tri_vertices[0][4], tri_vertices[0][2],  tri_vertices[0][3])
-    v2= (*tri_vertices[1][4], tri_vertices[1][2],  tri_vertices[1][3])
-    v3= (*tri_vertices[2][4], tri_vertices[2][2],  tri_vertices[2][3])
     
-    #  IF RGBA THEN TAKE ALPHA OF 3 VERTICES TO COMPUTE ALPHA OF INTERPOLATED POINT - A
+    vertex1= (*tri_vertices[0][4], tri_vertices[0][2],  tri_vertices[0][3])
+    vertex2= (*tri_vertices[1][4], tri_vertices[1][2],  tri_vertices[1][3])
+    vertex3= (*tri_vertices[2][4], tri_vertices[2][2],  tri_vertices[2][3])
     
-    w_1 = (((v2[1]-v3[1])*(point[0]-v3[0]))+((v3[0]-v2[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
-    w_2 = (((v3[1]-v1[1])*(point[0]-v3[0]))+((v1[0]-v3[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
-    w_3 = 1-w_1-w_2
     
-    # print("ve color:",vertex_color_list)
-    # print("ve: ",og_vertex)
+    weight2 = (((vertex3[1]-vertex1[1])*(point[0]-vertex3[0])) + ((vertex1[0]-vertex3[0])*(point[1]-vertex3[1])))/(((vertex2[1]-vertex3[1]) * (vertex1[0]-vertex3[0]))+((vertex3[0]-vertex2[0])*(vertex1[1]-vertex3[1])))
+    weight1 = (((vertex2[1]-vertex3[1])*(point[0]-vertex3[0])) + ((vertex3[0]-vertex2[0])*(point[1]-vertex3[1])))/(((vertex2[1]-vertex3[1]) * (vertex1[0]-vertex3[0]))+((vertex3[0]-vertex2[0])*(vertex1[1]-vertex3[1])))
+    weight3 = 1 - weight1 - weight2
     
     # print("color_triangle_vertex: ", vertex_color_list)
-    r = vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2+vertex_color_list[2][0]*w_3
-    g = vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2+vertex_color_list[2][1]*w_3
-    b = vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2+vertex_color_list[2][2]*w_3
+    r = vertex_color_list[0][0]*weight1+vertex_color_list[1][0]*weight2+vertex_color_list[2][0]*weight3
+    g = vertex_color_list[0][1]*weight1+vertex_color_list[1][1]*weight2+vertex_color_list[2][1]*weight3
+    b = vertex_color_list[0][2]*weight1+vertex_color_list[1][2]*weight2+vertex_color_list[2][2]*weight3
     # print("vertex_color_list: ",vertex_color_list)
-    a = vertex_color_list[0][3]*w_1+vertex_color_list[1][3]*w_2+vertex_color_list[2][3]*w_3
+    a = vertex_color_list[0][3]*weight1+vertex_color_list[1][3]*weight2+vertex_color_list[2][3]*weight3
     
     if isRGBA:
         if point not in color_buffer:
@@ -203,11 +200,9 @@ def interpolation_color_tri(vertex_color_list, point, tri_vertices):
     if isDepth:
         # print("point: ",point)
         if tuple(point) in depth_buffer:
-            z = w_1*v1[2]+w_2*v2[2]+w_3*v3[2]
-            w = w_1*v1[3]+w_2*v2[3]+w_3*v3[3]
-            val = z/w
+            val = (weight1*vertex1[2]+weight2*vertex2[2]+weight3*vertex3[2])/(weight1*vertex1[3]+weight2*vertex2[3]+weight3*vertex3[3])
 
-            if val > depth_buffer[point] and val > -1:
+            if val > -1 and val > depth_buffer[point]:
                 okToPutPixel = False
             else:
                 depth_buffer[point] = val
