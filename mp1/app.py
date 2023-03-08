@@ -10,19 +10,19 @@ import math
 vertex_list = []
 current_color = (255,255,255,1)
 vertex_colors_list = []
-# render_points = []
 isDepth = False
 issRGB = False
 # isHyp = False
 isCull = False
 isRGBA = False
+isLine = False
 depth_buffer = {}
 color_buffer = {}
 
 
 def get_commands_from_input(f_path):
      # get all commands from input file
-    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb", "depth","sRGB","cull","rgba"]
+    legal_command_start = ["png", "xyrgb", "xyc", "xyzw","tri","rgb", "depth","sRGB","cull","rgba","line"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -148,17 +148,18 @@ def linear_to_sRGB(linear_colors):
 #     return (x/w,y/w,z/w,1/w)
 
 # interpolation
-def interpolation_color(vertex_color_list, point, tri_vertices):
+def interpolation_color_tri(vertex_color_list, point, tri_vertices):
     global isDepth
     global issRGB
     global isRGBA
     global color_buffer
     
+    print("tri_vertices: ",tri_vertices)
     v1= (*tri_vertices[0][4], tri_vertices[0][2],  tri_vertices[0][3])
     v2= (*tri_vertices[1][4], tri_vertices[1][2],  tri_vertices[1][3])
     v3= (*tri_vertices[2][4], tri_vertices[2][2],  tri_vertices[2][3])
     
-    #  IF RGBA THEN TAKE ALPHA OF 3 VERTICES TO COMPUTE ALPHA OF INTERPOLATED POINT - A_S
+    #  IF RGBA THEN TAKE ALPHA OF 3 VERTICES TO COMPUTE ALPHA OF INTERPOLATED POINT - A
     
     w_1 = (((v2[1]-v3[1])*(point[0]-v3[0]))+((v3[0]-v2[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
     w_2 = (((v3[1]-v1[1])*(point[0]-v3[0]))+((v1[0]-v3[0])*(point[1]-v3[1])))/(((v2[1]-v3[1])*(v1[0]-v3[0]))+((v3[0]-v2[0])*(v1[1]-v3[1])))
@@ -215,6 +216,29 @@ def interpolation_color(vertex_color_list, point, tri_vertices):
     
     return r,g,b,a,okToPutPixel
 
+
+def interpolation_color_line(vertex_color_list, point, tri_vertices):
+    
+    v1= (*tri_vertices[0][4], tri_vertices[0][2],  tri_vertices[0][3])
+    v2= (*tri_vertices[1][4], tri_vertices[1][2],  tri_vertices[1][3])
+    
+    #  IF RGBA THEN TAKE ALPHA OF 3 VERTICES TO COMPUTE ALPHA OF INTERPOLATED POINT - A
+    
+    w_1 = (v1[0]-point[0]) + (v1[1]-point[1])
+    w_2 = 1 - w_1
+    
+    # print("ve color:",vertex_color_list)
+    # print("ve: ",og_vertex)
+    
+    # print("color_triangle_vertex: ", vertex_color_list)
+    r = vertex_color_list[0][0]*w_1+vertex_color_list[1][0]*w_2
+    g = vertex_color_list[0][1]*w_1+vertex_color_list[1][1]*w_2
+    b = vertex_color_list[0][2]*w_1+vertex_color_list[1][2]*w_2
+    # print("vertex_color_list: ",vertex_color_list)
+    a = vertex_color_list[0][3]*w_1+vertex_color_list[1][3]*w_2
+    
+    return r,g,b,a
+    
     
 # constructing the image
 def execute_commands(command):
@@ -224,8 +248,8 @@ def execute_commands(command):
     global issRGB
     global isCull
     global isRGBA
+    global isLine
     # global isHyp
-    # global render_points
     global depth_buffer
     for command in commands:
         if command[0] == "png":
@@ -289,7 +313,45 @@ def execute_commands(command):
             current_color = tuple([int(x) for x in command[1:]] + [1])
             print("current color update by rgb: ",current_color)
             print("current color list: ",vertex_colors_list)
+        
+        if command[0] == "line":
+            print("hi")
+            isLine = True
+            v1, v2 = [int(x) for x in command[1:]]
+            width, height = image.size
             
+            # if positive (do -1) - offset for 0 index in python lists
+            if v1 > 0:
+                v1 -=1
+            if v2 > 0:
+                v2 -=1
+            
+            line_vertices = [vertex_list[v1],vertex_list[v2]]
+            line_vertex_colors = [vertex_colors_list[v1], vertex_colors_list[v2]]
+            
+            if (abs(line_vertices[0][4][0] - line_vertices[1][4][0]) - abs(line_vertices[0][4][1] - line_vertices[1][4][1]) > 0): # manhattan distance
+                print("!")
+                line_dda = DDA(line_vertices[0], line_vertices[1], 0)
+                updated_line_dda = []
+                for point in line_dda:
+                    updated_point = [point[0], round(point[1])]
+                    updated_line_dda.append(updated_point)
+            else:
+                line_dda = DDA(line_vertices[0], line_vertices[1], 1)
+                print("?")
+                updated_line_dda = []
+                for point in line_dda:
+                    updated_point = [round(point[0]), point[1]]
+                    updated_line_dda.append(updated_point)
+            
+            print("updated_line_dda: ",updated_line_dda)
+            
+            for point in updated_line_dda:
+                if (point[0] <width and point[1]<height):
+                    interpolation_result = interpolation_color_line(list(line_vertex_colors) + [line_vertex_colors[0]], tuple(point), list(line_vertices) + [line_vertices[0]])
+                    put_color = interpolation_result[0:4]
+                    image.im.putpixel((round(point[0]),round(point[1])), (int(put_color[0]),int(put_color[1]),int(put_color[2]), int(put_color[3]*255)))
+                    
         if command[0] == "tri":
             v1, v2 ,v3 = [int(x) for x in command[1:]]
             width, height = image.size
@@ -316,7 +378,6 @@ def execute_commands(command):
                 v3_x, v3_y, v3_z = sorted_tri_vertices[2][4][0],sorted_tri_vertices[2][4][1],sorted_tri_vertices[2][2]
                 edge_1 = [v2_x-v1_x, v2_y-v1_y, v2_z-v1_z]
                 edge_2 = [v3_x-v1_x, v3_y-v1_y, v3_z-v1_z]
-                print(edge_1)
                 vector_cross_product = np.cross(edge_1, edge_2)
                 
                 print("Vector Cross Product: ", vector_cross_product)
@@ -326,7 +387,7 @@ def execute_commands(command):
             # do scanline for v1,v2 -> find points. v1,v3 -> find points. use points found from prev 2 lines to create lines and find points along them.
             scanline_result = scanline(tri_vertices[0], tri_vertices[1], tri_vertices[2])
             
-            print("tri_vertices: ",tri_vertices)
+            # print("tri_vertices: ",tri_vertices)
             # print("scanline_result: ", scanline_result)
             
             
@@ -334,7 +395,7 @@ def execute_commands(command):
             for point in scanline_result:
                 
                 if (point[0] <width and point[1]<height):
-                    interpolation_result = interpolation_color(tri_vertices_colors, tuple(point), tri_vertices)
+                    interpolation_result = interpolation_color_tri(tri_vertices_colors, tuple(point), tri_vertices)
                     # print("interpolation_result: ",interpolation_result)
                     put_color = interpolation_result[0:4]
                     isOkToPutPixel = interpolation_result[4]
@@ -367,7 +428,6 @@ if __name__=="__main__":
     # print("COMMANDS: ", commands)
     
     image = execute_commands(commands)
-    # image = render_image()
     print("vertex_list: ",vertex_list)
     print("vertex_colors_list: ",vertex_colors_list)
     
