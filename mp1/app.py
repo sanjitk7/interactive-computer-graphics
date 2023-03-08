@@ -154,7 +154,6 @@ def interpolation_color_tri(vertex_color_list, point, tri_vertices):
     global isRGBA
     global color_buffer
     
-    print("tri_vertices: ",tri_vertices)
     v1= (*tri_vertices[0][4], tri_vertices[0][2],  tri_vertices[0][3])
     v2= (*tri_vertices[1][4], tri_vertices[1][2],  tri_vertices[1][3])
     v3= (*tri_vertices[2][4], tri_vertices[2][2],  tri_vertices[2][3])
@@ -330,7 +329,6 @@ def execute_commands(command):
             line_vertex_colors = [vertex_colors_list[v1], vertex_colors_list[v2]]
             
             if (abs(line_vertices[0][4][0] - line_vertices[1][4][0]) - abs(line_vertices[0][4][1] - line_vertices[1][4][1]) > 0): # manhattan distance
-                print("!")
                 line_dda = DDA(line_vertices[0], line_vertices[1], 0)
                 updated_line_dda = []
                 for point in line_dda:
@@ -338,13 +336,12 @@ def execute_commands(command):
                     updated_line_dda.append(updated_point)
             else:
                 line_dda = DDA(line_vertices[0], line_vertices[1], 1)
-                print("?")
                 updated_line_dda = []
                 for point in line_dda:
                     updated_point = [round(point[0]), point[1]]
                     updated_line_dda.append(updated_point)
             
-            print("updated_line_dda: ",updated_line_dda)
+            # print("updated_line_dda: ",updated_line_dda)
             
             for point in updated_line_dda:
                 if (point[0] <width and point[1]<height):

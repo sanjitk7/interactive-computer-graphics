@@ -12,5 +12,6 @@ def black_or_b(a, b):
 
 a = Image.open(sys.argv[1])
 b = Image.open(sys.argv[2])
+loc = sys.argv[3]
 c = black_or_b(a, b)
-c.save('check_diff.png')
+c.save(loc + ".png")
