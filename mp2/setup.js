@@ -1,18 +1,31 @@
 
 
-function draw1() {
+function draw1(milliseconds) {
     gl.clear(gl.COLOR_BUFFER_BIT) 
     gl.useProgram(program)        // pick the shaders
+
+    // values that do not vary between vertexes or fragments are called "uniforms"
+    let secondsBindPoint = gl.getUniformLocation(program, 'seconds')
+    gl.uniform1f(secondsBindPoint, milliseconds/1000)
+
     gl.bindVertexArray(geom.vao)  // and the buffers
     gl.drawElements(geom.mode, geom.count, geom.type, 0) // then draw things
+
+    // requestAnimationFrame calls its callback at as close to your screen's refresh rate as it can manage; its argument is a number of milliseconds that have elapsed since the page was first loaded.
+    requestAnimationFrame(draw1)
 }
 
 function draw2() {
     console.log("draw2 was called")
     gl.clear(gl.COLOR_BUFFER_BIT) 
     gl.useProgram(program)        // pick the shaders
+    
+    gl.bindVertexArray(geom.vao)  // and the buffers
+    gl.drawElements(geom1.mode, geom1.count, geom1.type, 0) // then draw things
+
     gl.bindVertexArray(geom1.vao)  // and the buffers
     gl.drawElements(geom1.mode, geom1.count, geom1.type, 0) // then draw things
+    requestAnimationFrame(draw2)
 }
 
 async function setup(event) {
