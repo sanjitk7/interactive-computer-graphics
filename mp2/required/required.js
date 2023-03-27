@@ -41,6 +41,7 @@ async function setup_logo(event) {
     window.geom = setupGeomery(data)
     // window.geom1 = setupGeomery(data1)
     console.log("data is : ",data)
+    draw1()
 }
 
 // window.addEventListener('load',setup)
