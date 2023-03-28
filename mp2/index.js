@@ -1,6 +1,7 @@
 
 // trigger on radio button change
 function radioChanged() {
+    document.querySelector("canvas").style.backgroundColor = "white"
     let chosen = document.querySelector('input[name="example"]:checked').value
     cancelAnimationFrame(window.pending)
     if (chosen == 1){

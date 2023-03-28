@@ -29,38 +29,28 @@ function compileAndLinkGLSL(vs_source, fs_source) {
 
 // Setup the vertex geometry that was imported from an external location - JSON File for LOGO
 function setupGeomery(geom) {
-    // a "vertex array object" or VAO records various data provision commands
+
     var triangleArray = gl.createVertexArray()
     gl.bindVertexArray(triangleArray)
 
-    // Object.entries({k1:v1, k2:v2}) returns [[k1,v1],[k2,v2]]
-    // [a, b, c].forEach(func) calls func(a), then func(b), then func(c)
     Object.entries(geom.attributes).forEach(([name,data]) => {
-        // goal 1: get data from CPU memory to GPU memory 
-        // createBuffer allocates an array of GPU memory
+        
         let buf = gl.createBuffer()
-        // to get data into the array we tell the GPU which buffer to use
         gl.bindBuffer(gl.ARRAY_BUFFER, buf)
-        // and convert the data to a known fixed-sized type
+        
         let f32 = new Float32Array(data.flat())
-        // then send that data to the GPU, with a hint that we don't plan to change it very often
         gl.bufferData(gl.ARRAY_BUFFER, f32, gl.STATIC_DRAW)
         
-        // goal 2: connect the buffer to an input of the vertex shader
-        // this is done by finding the index of the given input name
         let loc = gl.getAttribLocation(program, name)
-        // telling the GPU how to parse the bytes of the array
         gl.vertexAttribPointer(loc, data[0].length, gl.FLOAT, false, 0, 0)
-        // and connecting the currently-used array to the VS input
         gl.enableVertexAttribArray(loc)
     })
 
-    // We also have to explain how values are connected into shapes.
-    // There are other ways, but we'll use indices into the other arrays
+
     var indices = new Uint16Array(geom.triangles.flat())
-    // we'll need a GPU array for the indices too
+
     var indexBuffer = gl.createBuffer()
-    // but the GPU puts it in a different "ready" position, one for indices
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW)
 

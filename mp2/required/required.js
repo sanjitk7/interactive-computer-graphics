@@ -6,30 +6,21 @@ function draw1(milliseconds) {
 
     // values that do not vary between vertexes or fragments are called "uniforms"
     let secondsBindPoint = gl.getUniformLocation(program, 'seconds')
+    let angleLocation = gl.getUniformLocation(program, 'angle');
+
+    const angle = 0.5;
+    gl.uniform1f(angleLocation, angle);
+
     gl.uniform1f(secondsBindPoint, milliseconds/1000)
 
     gl.bindVertexArray(geom.vao)  // and the buffers
+
+
     gl.drawElements(geom.mode, geom.count, geom.type, 0) // then draw things
 
     // requestAnimationFrame calls its callback at as close to your screen's refresh rate as it can manage; its argument is a number of milliseconds that have elapsed since the page was first loaded.
     requestAnimationFrame(draw1)
 }
-
-// const uiuc_logo_blue = new Float32Array([0.075, 0.16, 0.292, 1])
-// const uiuc_logo_orange = new Float32Array([1, 0.373, 0.02, 1])
-
-// function draw2() {
-//     console.log("draw2 was called")
-//     gl.clear(gl.COLOR_BUFFER_BIT) 
-//     gl.useProgram(program)        // pick the shaders
-    
-//     gl.bindVertexArray(geom.vao)  // and the buffers
-//     gl.drawElements(geom1.mode, geom1.count, geom1.type, 0) // then draw things
-
-//     gl.bindVertexArray(geom1.vao)  // and the buffers
-//     gl.drawElements(geom1.mode, geom1.count, geom1.type, 0) // then draw things
-//     requestAnimationFrame(draw2)
-// }
 
 async function setup_logo(event) {
     window.gl = document.querySelector('canvas').getContext('webgl2')

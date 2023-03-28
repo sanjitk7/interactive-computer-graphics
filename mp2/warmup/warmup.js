@@ -36,6 +36,7 @@ function draw2(milliseconds) {
 async function setup_warmup(event) {
     console.log("setup_warmup!")
     window.gl = document.querySelector('canvas').getContext('webgl2')
+    document.querySelector("canvas").style.backgroundColor = "yellow"
     let vs = await fetch('warmup/wmp2-vs.glsl').then(res => res.text())
     let fs = await fetch('warmup/wmp2-fs.glsl').then(res => res.text())
     compileAndLinkGLSL(vs,fs)
