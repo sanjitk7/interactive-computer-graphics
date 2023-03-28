@@ -13,7 +13,7 @@ void main() {
     vColor = color;
     gl_Position = position;
 
-    // offsetting the xy coordinates by some value for all vertices to create motion
+    // offsetting the xy coordinates by some value for all vertices to create motion 
     gl_Position = vec4(
         position.xy*cos(seconds*0.6180339887498949) + 0.5*sin(seconds),
         position.zw

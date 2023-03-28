@@ -14,11 +14,26 @@ function radioChanged() {
     // window.pending = requestAnimationFrame(window['draw'+chosen])
 }
 
+function resizeCanvas(){
+    let c = document.getElementById("myCanvas")
+    // c.width  = c.parentElement.clientWidth;
+    // c.height  = c.parentElement.clientHeight;
+    c.height = window.innerHeight
+    c.width = window.innerWidth
+    if (c.width<c.height){
+        c.height = c.width
+    } else {
+        c.width = c.height
+    }
+}
+
 // wait for all parts of the webpage to load and trigger graphics creation on radio button selection
 window.addEventListener('load',(event)=>{
+    resizeCanvas()
     document.querySelectorAll('input[name="example"]').forEach(elem => {
         elem.addEventListener('change', radioChanged)
     })
     // setup_logo()
     radioChanged()
 })
+
