@@ -1,5 +1,7 @@
 
-// trigger on radio button change
+const initMatrix = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1])
+
+// trigger on radio button change - calls a different graphic by initialising a different set of shader programs
 function radioChanged() {
     document.querySelector("canvas").style.backgroundColor = "white"
     let chosen = document.querySelector('input[name="example"]:checked').value
@@ -14,6 +16,7 @@ function radioChanged() {
     // window.pending = requestAnimationFrame(window['draw'+chosen])
 }
 
+// resize the canvas for better visibility of the animation
 function resizeCanvas(){
     let c = document.getElementById("myCanvas")
     // c.width  = c.parentElement.clientWidth;

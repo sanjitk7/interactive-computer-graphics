@@ -25,6 +25,7 @@ function compileAndLinkGLSL(vs_source, fs_source) {
         console.error(gl.getProgramInfoLog(program))
         throw Error("Linking failed")
     }
+    // return program
 }
 
 // Setup the vertex geometry that was imported from an external location - JSON File for LOGO
@@ -55,9 +56,9 @@ function setupGeomery(geom) {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW)
 
     return {
-        mode:gl.TRIANGLES,      // grab 3 indices per triangle
-        count:indices.length,   // out of this many indices overall
-        type:gl.UNSIGNED_SHORT, // each index is stored as a Uint16
-        vao:triangleArray       // and this VAO knows which buffers to use
+        mode:gl.TRIANGLES,
+        count:indices.length,
+        type:gl.UNSIGNED_SHORT,
+        vao:triangleArray
     }
 }
