@@ -11,6 +11,8 @@ void main() {
 
     vColor = color;
 
-    gl_Position = initMatrix * position;
+    vec4 new_position = initMatrix * position; 
+
+    gl_Position = vec4(new_position);
 }
 

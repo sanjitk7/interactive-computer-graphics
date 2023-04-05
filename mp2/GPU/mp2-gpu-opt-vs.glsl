@@ -14,6 +14,6 @@ void main() {
 
     float ang = 2.399963229728653 * float(gl_VertexID) + 2.0*seconds;
 
-    gl_Position = position + vec4(0.05*cos(ang), 0.05*sin(ang), 0, 2);
+    gl_Position = position + vec4(0.05*cos(ang), 0.05*sin(ang), 0, 0);
 }
 
