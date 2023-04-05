@@ -12,8 +12,12 @@ function radioChanged() {
     } else if(chosen == 2){
         setup_warmup()
         window.pending = requestAnimationFrame(window["draw"+chosen])
-    }
-    // window.pending = requestAnimationFrame(window['draw'+chosen])
+    } 
+    else if(chosen == 3){
+        setup_cpu()
+        window.pending = requestAnimationFrame(window["draw"+chosen])
+    } 
+    window.pending = requestAnimationFrame(window['draw'+chosen])
 }
 
 // resize the canvas for better visibility of the animation

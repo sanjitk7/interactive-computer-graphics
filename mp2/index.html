@@ -9,12 +9,15 @@
     <script src="index.js"></script>
     <script src="required/required.js"></script>
     <script src="warmup/warmup.js"></script>
+    <script src="CPU/cpu.js"></script>
 </head>
 
 <body>
-    <label><input type="radio" name="example" value="1" checked />Required: Dancing U of I Logo</label>
+    <label><input type="radio" name="example" value="1" checked /><b>Required: Dancing U of I Logo</b>  using translation, rotation and scaling matrices</label>
     <br />
-    <label><input type="radio" name="example" value="2" />Warmup: Red dots dancing in yellow background</label>
+    <label><input type="radio" name="example" value="2" /><b>Required: Other Animation </b> of Red dots in yellow background</label>
+    <br />
+    <label><input type="radio" name="example" value="3" /><b>Optional: CPU Movement</b> -  U of I Logo vertices are moved by random new offsets that are computed in the CPU with JS: Math.Random()</label>
     <br />
     <canvas id="myCanvas" width="500" height="500" style="background:none"></canvas>
 </body>
