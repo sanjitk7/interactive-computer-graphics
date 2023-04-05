@@ -12,8 +12,7 @@ function radioChanged() {
     } else if(chosen == 2){
         setup_warmup()
         window.pending = requestAnimationFrame(window["draw"+chosen])
-    } 
-    else if(chosen == 3){
+    } else if(chosen == 3){
         setup_cpu()
         window.pending = requestAnimationFrame(window["draw"+chosen])
     } else if (chosen == 4){
@@ -21,6 +20,9 @@ function radioChanged() {
         window.pending = requestAnimationFrame(window["draw"+chosen])
     } else if (chosen == 5){
         setup_psych()
+        window.pending = requestAnimationFrame(window["draw"+chosen])
+    } else if (chosen == 6){
+        setup_mouse()
         window.pending = requestAnimationFrame(window["draw"+chosen])
     }
     window.pending = requestAnimationFrame(window['draw'+chosen])
