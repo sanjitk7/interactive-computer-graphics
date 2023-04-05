@@ -19,6 +19,9 @@ function radioChanged() {
     } else if (chosen == 4){
         setup_gpu()
         window.pending = requestAnimationFrame(window["draw"+chosen])
+    } else if (chosen == 5){
+        setup_psych()
+        window.pending = requestAnimationFrame(window["draw"+chosen])
     }
     window.pending = requestAnimationFrame(window['draw'+chosen])
 }
@@ -26,8 +29,6 @@ function radioChanged() {
 // resize the canvas for better visibility of the animation
 function resizeCanvas(){
     let c = document.getElementById("myCanvas")
-    // c.width  = c.parentElement.clientWidth;
-    // c.height  = c.parentElement.clientHeight;
     c.height = window.innerHeight
     c.width = window.innerWidth
     if (c.width<c.height){

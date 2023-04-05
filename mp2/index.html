@@ -11,6 +11,7 @@
     <script src="warmup/warmup.js"></script>
     <script src="CPU/cpu.js"></script>
     <script src="GPU/gpu.js"></script>
+    <script src="psychedelic/psychedelic.js"></script>
 </head>
 
 <body>
@@ -21,6 +22,8 @@
     <label><input type="radio" name="example" value="3" /><b>Optional: CPU Movement</b> -  U of I Logo vertices are moved by random new offsets that are computed in the CPU with JS: Math.Random()</label>
     <br />
     <label><input type="radio" name="example" value="4" /><b>Optional: GPU Movement</b> -  U of I Logo vertices are moved by different offsets computed in the GPU - Vertex Shader</label>
+    <br />
+    <label><input type="radio" name="example" value="5" /><b>Optional: Psychedelic</b> - Non linear pattern change in a full canvas object via the fragment shader</label>
     <br />
     <canvas id="myCanvas" width="500" height="500" style="background:none"></canvas>
 </body>

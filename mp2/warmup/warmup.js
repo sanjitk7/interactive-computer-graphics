@@ -1,6 +1,5 @@
 // draw function from warmup mp
 function draw2(milliseconds) {
-    console.log("draw 2 is called")
     gl.clear(gl.COLOR_BUFFER_BIT)
     gl.useProgram(program)
     let secondsBindPoint = gl.getUniformLocation(program, 'seconds')

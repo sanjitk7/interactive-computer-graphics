@@ -1,4 +1,6 @@
 
+// This file contains functions provided in the course material while describing the operations
+
 const m4trans = (dx,dy,dz) => new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, dx,dy,dz,1])
 const m4rotX = (ang) => { // around x axis
     let c = Math.cos(ang), s = Math.sin(ang);
