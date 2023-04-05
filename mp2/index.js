@@ -16,7 +16,10 @@ function radioChanged() {
     else if(chosen == 3){
         setup_cpu()
         window.pending = requestAnimationFrame(window["draw"+chosen])
-    } 
+    } else if (chosen == 4){
+        setup_gpu()
+        window.pending = requestAnimationFrame(window["draw"+chosen])
+    }
     window.pending = requestAnimationFrame(window['draw'+chosen])
 }
 

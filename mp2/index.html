@@ -10,6 +10,7 @@
     <script src="required/required.js"></script>
     <script src="warmup/warmup.js"></script>
     <script src="CPU/cpu.js"></script>
+    <script src="GPU/gpu.js"></script>
 </head>
 
 <body>
@@ -18,6 +19,8 @@
     <label><input type="radio" name="example" value="2" /><b>Required: Other Animation </b> of Red dots in yellow background</label>
     <br />
     <label><input type="radio" name="example" value="3" /><b>Optional: CPU Movement</b> -  U of I Logo vertices are moved by random new offsets that are computed in the CPU with JS: Math.Random()</label>
+    <br />
+    <label><input type="radio" name="example" value="4" /><b>Optional: GPU Movement</b> -  U of I Logo vertices are moved by different offsets computed in the GPU - Vertex Shader</label>
     <br />
     <canvas id="myCanvas" width="500" height="500" style="background:none"></canvas>
 </body>

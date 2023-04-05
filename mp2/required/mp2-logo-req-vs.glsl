@@ -14,15 +14,7 @@ out vec4 vColor;
 void main() {
 
     vColor = color;
-    // gl_Position = position;
 
-    // // offsetting the xy coordinates by some value for all vertices to create motion and 
-    // gl_Position = vec4(
-    //     position.xy*sin(seconds*0.75) + 0.5*cos(seconds),
-    //     position.zw
-    // );
-
-    // // apply translation, rotation to position
-    gl_Position = initMatrix * translationMatrix * rotationMatrix * scaleMatrix  * position;
+    gl_Position = vec4(initMatrix * translationMatrix * rotationMatrix * scaleMatrix  * position);
 }
 
