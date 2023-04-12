@@ -1,21 +1,27 @@
 // Using a fixed object rotating to start with
 
+const FullBlack = new Float32Array([0.09, 0.09, 0.09, 1])
 
 // our initial plane shape
-var tetrahedron =
+var land_plane =
     {"triangles":
         [0,1,2
-        ,1,2,3
         ,2,3,0
-        ,3,0,1
         ]
     ,"attributes":
         {"position":
-            [[-0.5,-0.5,-0.5]
-            ,[ 0.5, 0.5,-0.5]
-            ,[-0.5, 0.5, 0.5]
-            ,[ 0.5,-0.5, 0.5]
+            [[-3.0,4.5,0.0]
+            ,[ 3.0, 4.5,0.0]
+            ,[3.0, -4.5, 0.0]
+            ,[ -3.0,-4.5, 0.0]
             ]
+            // [
+            //     [-0.5, 0.5, 0.0],
+            //     [0.5, 0.5, 0.0],
+            //     [0.5, -0.5, 0.0],
+            //     [-0.5, -0.5, 0.0],
+            // ]
+              
         }
     }
 
@@ -30,7 +36,7 @@ function draw() {
 
     gl.bindVertexArray(geom.vao)
 
-    gl.uniform4fv(gl.getUniformLocation(program, 'color'), IlliniOrange)
+    gl.uniform4fv(gl.getUniformLocation(program, 'color'), FullBlack)
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
     gl.drawElements(geom.mode, geom.count, geom.type, 0)
@@ -41,8 +47,14 @@ function draw() {
 function timeStep(milliseconds) {
     let seconds = milliseconds / 1000;
     
-    window.m = m4rotX(seconds)
-    window.v = m4view([1,2,3], [0,0,0], [0,1,0])
+    window.m = IdentityMatrix
+
+    /*
+    eye is moving around the plane
+    camera is at origin
+    normal has to be z to be looking at the plane from above
+    */
+    window.v = m4view([Math.cos(seconds),Math.sin(seconds),3], [0,0,0], [0,0,1])
 
     draw()
     requestAnimationFrame(timeStep)
@@ -60,7 +72,7 @@ function fillScreen() {
     canvas.style.height = ''
     if (window.gl) {
         gl.viewport(0,0, canvas.width, canvas.height)
-        window.p = m4perspNegZ(0.1, 10, 1.5, canvas.width, canvas.height)
+        window.p = m4perspNegZ(0.1, 10, 2.2, canvas.width, canvas.height)
     }
 }
 
@@ -74,7 +86,7 @@ async function setup(event) {
     let fs = await fetch('shaders/mp3-fs.glsl').then(res => res.text())
     window.program = compileAndLinkGLSL(vs,fs)
     gl.enable(gl.DEPTH_TEST)
-    window.geom = setupGeomery(tetrahedron)
+    window.geom = setupGeomery(land_plane)
     fillScreen()
     window.addEventListener('resize', fillScreen)
     requestAnimationFrame(timeStep)

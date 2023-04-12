@@ -4,4 +4,5 @@ uniform mat4 p;
 uniform mat4 mv;
 void main() {
     gl_Position = p * mv * position;
+    // gl_Position = position;
 }
