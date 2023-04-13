@@ -19,12 +19,19 @@ var land_plane =
             ,[ 4.5, 4.5,0.0]
             ,[4.5, -4.5, 0.0]
             ,[ -4.5,-4.5, 0.0]
-            ]
+            ],
             
             // [[-0.5,-0.5,-0.5]
             // ,[ 0.5, 0.5,-0.5]
             // ,[-0.5, 0.5, 0.5]
             // ,[ 0.5,-0.5, 0.5]
+            // ]
+
+            // "color" : [
+            //     [0.0,1.0,0.0],
+            //     [0.0,1.0,0.0],
+            //     [0.0,1.0,0.0],
+            //     [0.0,1.0,0.0]
             // ]
               
         }
@@ -41,6 +48,7 @@ function draw() {
 
     gl.bindVertexArray(geom.vao)
 
+    gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), normalize([2,2,-3]))
     gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
@@ -93,6 +101,8 @@ async function setup(event) {
     let fs = await fetch('shaders/mp3-fs.glsl').then(res => res.text())
     window.program = compileAndLinkGLSL(vs,fs)
     gl.enable(gl.DEPTH_TEST)
+    gl.enable(gl.BLEND)
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
     window.geom = setupGeomery(land_plane)
     fillScreen()
     window.addEventListener('resize', fillScreen)
