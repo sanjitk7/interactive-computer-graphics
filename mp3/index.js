@@ -1,25 +1,30 @@
 // Using a fixed object rotating to start with
 
-const FullBlack = new Float32Array([0.09, 0.09, 0.09, 1])
+const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 
 // our initial plane shape
 var land_plane =
     {"triangles":
-        [0,1,2
-        ,2,3,0
+        [[0,1,2]
+        ,[2,3,0]
         ]
+        // [[3,2,1],
+        //  [2,3,0],
+        //  [1,2,0],
+        //  [0,3,1]
+        // ]
     ,"attributes":
         {"position":
-            [[-3.0,4.5,0.0]
-            ,[ 3.0, 4.5,0.0]
-            ,[3.0, -4.5, 0.0]
-            ,[ -3.0,-4.5, 0.0]
+            [[-4.5,4.5,0.0]
+            ,[ 4.5, 4.5,0.0]
+            ,[4.5, -4.5, 0.0]
+            ,[ -4.5,-4.5, 0.0]
             ]
-            // [
-            //     [-0.5, 0.5, 0.0],
-            //     [0.5, 0.5, 0.0],
-            //     [0.5, -0.5, 0.0],
-            //     [-0.5, -0.5, 0.0],
+            
+            // [[-0.5,-0.5,-0.5]
+            // ,[ 0.5, 0.5,-0.5]
+            // ,[-0.5, 0.5, 0.5]
+            // ,[ 0.5,-0.5, 0.5]
             // ]
               
         }
@@ -36,7 +41,7 @@ function draw() {
 
     gl.bindVertexArray(geom.vao)
 
-    gl.uniform4fv(gl.getUniformLocation(program, 'color'), FullBlack)
+    gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
     gl.drawElements(geom.mode, geom.count, geom.type, 0)
@@ -47,6 +52,7 @@ function draw() {
 function timeStep(milliseconds) {
     let seconds = milliseconds / 1000;
     
+    // window.m = m4mul(m4rotY(seconds), m4rotX(-Math.PI/2))
     window.m = IdentityMatrix
 
     /*
@@ -54,6 +60,7 @@ function timeStep(milliseconds) {
     camera is at origin
     normal has to be z to be looking at the plane from above
     */
+    // window.v = m4view([1,1,3], [0,0,0], [0,1,0])
     window.v = m4view([Math.cos(seconds),Math.sin(seconds),3], [0,0,0], [0,0,1])
 
     draw()
@@ -90,6 +97,19 @@ async function setup(event) {
     fillScreen()
     window.addEventListener('resize', fillScreen)
     requestAnimationFrame(timeStep)
+}
+
+
+// call back that is called with the options object from the html file's form (buttons) - contains parameters to be used while creation and rendering of scene
+async function setupScene(scene, options){
+    console.log("setupScene called with: scene = ", scene, " ,options = ",options)
+    
+    // let monkey = await fetch('../playground3/monkey.json').then(res => res.json())
+
+    // add surface normals to our polygon created
+    addNormals(land_plane)
+    window.geom = setupGeomery(land_plane)
+    console.log(land_plane)
 }
 
 window.addEventListener('load',setup)
