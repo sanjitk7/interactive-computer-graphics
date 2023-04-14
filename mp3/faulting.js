@@ -39,7 +39,10 @@ function randomFloatFromInterval(min, max) {
     return Math.random() * (max - min + 1) + min
   }
 
-// create given number of slices by picking random points in the terrain grid
+/* create given number of slices by picking random points in the terrain grid
+This is done by 3 sub parts - 1. selecting a random p in the grid, 2. selecting a random angle from (0,2pi),
+3. creating an orth n vector as suggested using sin and cos, shifting z coordinate of entire world based on sign of the dot product (b - p).n
+*/
 function createRandomFaults(offset, slices, terrainGrid){
 
     console.log("offset:",offset)
@@ -47,16 +50,18 @@ function createRandomFaults(offset, slices, terrainGrid){
     fault_change = 0.005
     for (let i = 0;i < slices; i++){
         random_p = [randomFloatFromInterval(-0.5,0.5)*offset, randomFloatFromInterval(-1,1)*offset,0]
-        console.log(random_p)
-        random_angle = randomFloatFromInterval(0, 2*pi)
-        // random_angle = (Math.random())*2*3.1415
+
+        random_angle = randomFloatFromInterval(-2*pi, 2*pi)
+
         random_n_vector = [Math.cos(random_angle), Math.sin(random_angle), 0]
 
         console.log("random_p:",random_p)
 
         // for each vertex
         for (let j = 0; j < terrainGrid.attributes.position.length ; j++){
+            
             diff_b_p = sub(terrainGrid.attributes.position[j], random_p)
+            
             check_fault_dir = dot(diff_b_p, random_n_vector)
             
             // console.log("bef:",terrainGrid.attributes.position[i])
@@ -89,7 +94,7 @@ function createRandomFaults(offset, slices, terrainGrid){
         for (let i = 0;i < terrainGrid.attributes.position.length; i++){
             // scale it to bounds of the x or y coordinates
             terrainGrid.attributes.position[i][2] = ((terrainGrid.attributes.position[i][2] - min_z)/(max_z - min_z))*((max_x - min_x)*0.5)
-            terrainGrid.attributes.position[i][2] = terrainGrid.attributes.position[i][2] * ((max_x - min_x)*0.5)/2
+            // terrainGrid.attributes.position[i][2] = terrainGrid.attributes.position[i][2] * ((max_x - min_x))/2
         }
     }
 

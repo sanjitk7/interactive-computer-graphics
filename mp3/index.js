@@ -60,21 +60,24 @@ function draw() {
 function timeStep(milliseconds) {
     let seconds = milliseconds / 1000;
     
-    // window.m = m4mul(m4rotY(seconds), m4rotX(-Math.PI/2))
-    window.m = IdentityMatrix
+    // window.m = m4rotX(-Math.PI/2)
+    window.m = m4mul(m4rotY(seconds/2), m4rotX(-Math.PI/2))
+    // window.m = IdentityMatrix
 
     /*
     eye is moving around the plane
     camera is at origin
     normal has to be z to be looking at the plane from above
     */
-    // window.v = m4view([1,1,3], [0,0,0], [0,1,0])
-    window.v = m4view([Math.cos(seconds),Math.sin(seconds),3], [0,0,0], [0,0,1])
+    window.v = m4view([1,4,3], [0,0,0], [0,1,0])
+    // window.v = m4view([Math.cos(seconds),Math.sin(seconds),6], [0,0,0], [0,0,3])
 
     draw()
     requestAnimationFrame(timeStep)
 }
 
+
+// From Lecture Examples of Tetrahedron
 /** Resizes the canvas to completely fill the screen */
 function fillScreen() {
     let canvas = document.querySelector('canvas')
@@ -87,7 +90,7 @@ function fillScreen() {
     canvas.style.height = ''
     if (window.gl) {
         gl.viewport(0,0, canvas.width, canvas.height)
-        window.p = m4perspNegZ(0.1, 10, 2.2, canvas.width, canvas.height)
+        window.p = m4perspNegZ(0.1, 10, 1.5, canvas.width, canvas.height)
     }
 }
 
