@@ -114,22 +114,23 @@ async function setup(event) {
 async function setupScene(scene, options){
     console.log("setupScene called with: scene = ", scene, " ,options = ",options)
     
-    terrainGridWithoutFaults = computeTerrainGridTriangles(5, options.resolution)
+    land_plane = computeTerrainGridTriangles(4, options.resolution)
     console.log("terrainGrid:",terrainGrid)
 
-    terrainGridWithFaults = createRandomFaults(5, options.slices, terrainGridWithoutFaults)
+    land_plane = createRandomFaults(4, options.slices, land_plane)
 
-    console.log("terrainGridWithFaults:",terrainGridWithFaults)
+    console.log("terrainGridWithFaults:",land_plane)
     // let monkey = await fetch('../playground3/monkey.json').then(res => res.json())
 
-    
+
     // add surface normals to our polygon created
-    addNormals(terrainGridWithFaults)
+    addNormals(land_plane)
 
 
+    console.log("land_plane:",land_plane)
 
-    window.geom = setupGeomery(terrainGridWithFaults)
-    console.log(terrainGridWithFaults)
+    window.geom = setupGeomery(land_plane)
+    console.log(land_plane)
 }
 
 window.addEventListener('load',setup)

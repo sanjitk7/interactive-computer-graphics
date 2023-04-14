@@ -4,14 +4,14 @@ This is a 3-fold process with - nxn rect grid creation, random fault planes and 
 */
 function computeTerrainGridTriangles(offset, gridSize) {
   // everytime we call the function we re-create grid based on optionsTree params - this would be a geom style object
-  terrainGrid = { triangles: [], attributes: { position: [], color: []}};
+  terrainGrid = { triangles: [], attributes: { position: []}};
 
 // identify grid positions for each traingle vertex
   for (let i = 0; i <= gridSize; i++){
     for (let j = 0; j<= gridSize; j++){
         
         // we compute the next position from the starting positions based on resolution - distance from bw each 2 points will be offset/gridSize
-        nextPosition = [(-(offset*0.5) + offset/gridSize * i), (-(offset*0.5) + offset/gridSize * j), 0]
+        nextPosition = [(-(offset*0.5) + (offset/gridSize) * i), (-(offset*0.5) + (offset/gridSize) * j), 0]
 
         terrainGrid.attributes.position.push(nextPosition)
     }
@@ -24,8 +24,10 @@ function computeTerrainGridTriangles(offset, gridSize) {
         n = gridSize + 1
         i = l*n + k
         tri1 = [i, i+1, i+n]
-        tri2 = [i+1, i+n, i+n+1]
-        terrainGrid.triangles = terrainGrid.triangles.concat([tri1, tri2])
+        tri2 = [i+1, i+n+1, i+n]
+        // terrainGrid.triangles = terrainGrid.triangles.concat([tri1, tri2])
+        terrainGrid.triangles.push(tri1)
+        terrainGrid.triangles.push(tri2)
     }
   }
 
@@ -37,30 +39,34 @@ function randomFloatFromInterval(min, max) {
     return Math.random() * (max - min + 1) + min
   }
 
-
 // create given number of slices by picking random points in the terrain grid
 function createRandomFaults(offset, slices, terrainGrid){
 
-    vertices = terrainGrid.attributes.position
+    console.log("offset:",offset)
     pi = 3.141592653
-    fault_change = 0.00777
+    fault_change = 0.005
     for (let i = 0;i < slices; i++){
-        random_p = [randomFloatFromInterval(-1,1)*offset, randomFloatFromInterval(-1,1)*offset,0]
-        // console.log(random_p)
+        random_p = [randomFloatFromInterval(-0.5,0.5)*offset, randomFloatFromInterval(-1,1)*offset,0]
+        console.log(random_p)
         random_angle = randomFloatFromInterval(0, 2*pi)
+        // random_angle = (Math.random())*2*3.1415
         random_n_vector = [Math.cos(random_angle), Math.sin(random_angle), 0]
 
+        console.log("random_p:",random_p)
+
         // for each vertex
-        for (let j = 0; j < vertices.length ; j++){
-            diff_b_p = sub(vertices[j], random_p)
+        for (let j = 0; j < terrainGrid.attributes.position.length ; j++){
+            diff_b_p = sub(terrainGrid.attributes.position[j], random_p)
             check_fault_dir = dot(diff_b_p, random_n_vector)
             
+            // console.log("bef:",terrainGrid.attributes.position[i])
             // move z coordniate based on sign of prev dot product
             if (check_fault_dir > 0) {
-                vertices[i][2] = vertices[i][2] + fault_change
+                terrainGrid.attributes.position[j][2] = terrainGrid.attributes.position[j][2] + fault_change
             } else{
-                vertices[i][2] = vertices[i][2] - fault_change
+                terrainGrid.attributes.position[j][2] = terrainGrid.attributes.position[j][2] - fault_change
             }
+            // console.log("aft:",terrainGrid.attributes.position[i])
         }
 
     }
@@ -69,10 +75,10 @@ function createRandomFaults(offset, slices, terrainGrid){
     all_z = []
     all_y = []
     all_x = []
-    for (let i = 0;i < vertices.length; i++){
-        all_x.push(vertices[i][0])
-        all_y.push(vertices[i][1])
-        all_z.push(vertices[i][2])
+    for (let i = 0;i < terrainGrid.attributes.position.length; i++){
+        all_x.push(terrainGrid.attributes.position[i][0])
+        all_y.push(terrainGrid.attributes.position[i][1])
+        all_z.push(terrainGrid.attributes.position[i][2])
     }
     min_x = Math.min(...all_x)
     min_z = Math.min(...all_z)
@@ -80,15 +86,15 @@ function createRandomFaults(offset, slices, terrainGrid){
     max_z = Math.max(...all_z)
 
     if ((max_x - min_x) > 0) {
-        for (let i = 0;i < vertices.length; i++){
+        for (let i = 0;i < terrainGrid.attributes.position.length; i++){
             // scale it to bounds of the x or y coordinates
-            vertices[i][2] = ((vertices[i][2] - min_z)/(max_z - min_z))*((max_x - min_x)*0.3)
-            vertices[i][2] = vertices[i][2] * ((max_x - min_x)*0.3)/2
+            terrainGrid.attributes.position[i][2] = ((terrainGrid.attributes.position[i][2] - min_z)/(max_z - min_z))*((max_x - min_x)*0.5)
+            terrainGrid.attributes.position[i][2] = terrainGrid.attributes.position[i][2] * ((max_x - min_x)*0.5)/2
         }
     }
 
 
-    terrainGrid.attributes.position = vertices
+    // terrainGrid.attributes.position = vertices
 
     return terrainGrid
 
