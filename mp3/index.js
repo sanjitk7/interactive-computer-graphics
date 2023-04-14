@@ -114,6 +114,8 @@ async function setup(event) {
 async function setupScene(scene, options){
     console.log("setupScene called with: scene = ", scene, " ,options = ",options)
     
+    terrainGrid = computeTerrainGridTriangles(5, options.resolution)
+    console.log("terrainGrid:",terrainGrid)
     // let monkey = await fetch('../playground3/monkey.json').then(res => res.json())
 
     // add surface normals to our polygon created
