@@ -48,7 +48,11 @@ function draw() {
 
     gl.bindVertexArray(geom.vao)
 
-    gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), normalize([2,2,-3])) // light dir
+    let lightdir =  normalize([1,1,-2])
+    let halfway = normalize(add(lightdir, [0,0,1]))
+
+    gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), lightdir) // light dir
+    gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
     gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
@@ -62,9 +66,10 @@ function timeStep(milliseconds) {
     let seconds = milliseconds / 1000;
     
     window.m = m4mul(m4rotY(seconds/2), m4rotX(-Math.PI/2))
+    // window.m = m4mul(m4rotY(seconds/2), m4rotX(seconds))
     // window.m = IdentityMatrix
 
-    window.v = m4view([1,4,3], [0,0,0], [0,1,0])
+    window.v = m4view([1,5,3], [0,0,0], [0,1,0])
 
     draw()
     requestAnimationFrame(timeStep)
@@ -82,6 +87,7 @@ async function setup(event) {
     gl.enable(gl.DEPTH_TEST)
     gl.enable(gl.BLEND)
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+    addNormals(land_plane)
     window.geom = setupGeomery(land_plane)
     fillScreen()
     window.addEventListener('resize', fillScreen)
@@ -92,6 +98,7 @@ async function setup(event) {
 // call back that is called with the options object from the html file's form (buttons) - contains parameters to be used while creation and rendering of scene
 async function setupScene(scene, options){
     console.log("setupScene called with: scene = ", scene, " ,options = ",options)
+
     
     land_plane_with_grid = computeTerrainGridTriangles(5, options.resolution)
     console.log("terrainGrid:",terrainGrid)

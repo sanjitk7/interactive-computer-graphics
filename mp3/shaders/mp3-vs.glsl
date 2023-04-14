@@ -8,6 +8,6 @@ uniform mat4 mv;
 void main() {
     gl_Position = p * mv * position;
     fnormal = mat3(mv) * normal;
-    tempcolor = vec4(0, 0.5, 0.5, 1);
+    tempcolor = vec4(0.0, 0.5, 0.5, 1);
     // gl_Position = position;
 }
