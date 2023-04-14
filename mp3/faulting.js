@@ -47,7 +47,7 @@ function createRandomFaults(offset, slices, terrainGrid){
 
     console.log("offset:",offset)
     pi = 3.141592653
-    fault_change = 0.005
+    fault_change = 0.007
     for (let i = 0;i < slices; i++){
         random_p = [randomFloatFromInterval(-0.5,0.5)*offset, randomFloatFromInterval(-1,1)*offset,0]
 

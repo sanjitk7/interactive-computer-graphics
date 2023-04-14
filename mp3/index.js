@@ -60,38 +60,13 @@ function draw() {
 function timeStep(milliseconds) {
     let seconds = milliseconds / 1000;
     
-    // window.m = m4rotX(-Math.PI/2)
     window.m = m4mul(m4rotY(seconds/2), m4rotX(-Math.PI/2))
     // window.m = IdentityMatrix
 
-    /*
-    eye is moving around the plane
-    camera is at origin
-    normal has to be z to be looking at the plane from above
-    */
     window.v = m4view([1,4,3], [0,0,0], [0,1,0])
-    // window.v = m4view([Math.cos(seconds),Math.sin(seconds),6], [0,0,0], [0,0,3])
 
     draw()
     requestAnimationFrame(timeStep)
-}
-
-
-// From Lecture Examples of Tetrahedron
-/** Resizes the canvas to completely fill the screen */
-function fillScreen() {
-    let canvas = document.querySelector('canvas')
-    document.body.style.margin = '0'
-    canvas.style.width = '100%'
-    canvas.style.height = '100%'
-    canvas.width = canvas.clientWidth
-    canvas.height = canvas.clientHeight
-    canvas.style.width = ''
-    canvas.style.height = ''
-    if (window.gl) {
-        gl.viewport(0,0, canvas.width, canvas.height)
-        window.p = m4perspNegZ(0.1, 10, 1.5, canvas.width, canvas.height)
-    }
 }
 
 /** Compile, link, set up geometry */
@@ -117,23 +92,23 @@ async function setup(event) {
 async function setupScene(scene, options){
     console.log("setupScene called with: scene = ", scene, " ,options = ",options)
     
-    land_plane = computeTerrainGridTriangles(4, options.resolution)
+    land_plane_with_grid = computeTerrainGridTriangles(5, options.resolution)
     console.log("terrainGrid:",terrainGrid)
 
-    land_plane = createRandomFaults(4, options.slices, land_plane)
+    land_plane_with_faults = createRandomFaults(5, options.slices, land_plane_with_grid)
 
     console.log("terrainGridWithFaults:",land_plane)
     // let monkey = await fetch('../playground3/monkey.json').then(res => res.json())
 
+    land_plane = land_plane_with_faults
 
-    // add surface normals to our polygon created
-    addNormals(land_plane)
+    // add surface normals to our polygon created for diffuse lighting 
+    addNormals(land_plane_with_faults)
 
 
-    console.log("land_plane:",land_plane)
+    // console.log("land_plane:",land_plane_with_faults)
 
-    window.geom = setupGeomery(land_plane)
-    console.log(land_plane)
+    window.geom = setupGeomery(land_plane_with_faults)
 }
 
 window.addEventListener('load',setup)

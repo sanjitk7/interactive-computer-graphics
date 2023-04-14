@@ -9,6 +9,7 @@
     <script src="operations.js"></script>
     <script src="lighting.js"></script>
     <script src="faulting.js"></script>
+    <script src="screen-util.js"></script>
     <!-- handles controls -->
 
 
@@ -39,25 +40,6 @@ const IlliniBlue = new Float32Array([0.075, 0.16, 0.292, 1])
 function draw() {
     gl.clearColor(...IlliniBlue) // f(...[1,2,3]) means f(1,2,3)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-}
-
-/**
- * Resizes the canvas to completely fill the screen
- */
-function fillScreen() {
-    let canvas = document.querySelector('canvas')
-    document.body.style.margin = '0'
-    canvas.style.width = '100%'
-    canvas.style.height = '100%'
-    canvas.width = canvas.clientWidth
-    canvas.height = canvas.clientHeight
-    canvas.style.width = ''
-    canvas.style.height = ''
-    // to do: update aspect ratio of projection matrix here
-    if (window.gl) {
-        gl.viewport(0,0, canvas.width, canvas.height)
-        draw()
-    }
 }
 
 /**
