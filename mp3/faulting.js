@@ -25,9 +25,9 @@ function computeTerrainGridTriangles(offset, gridSize) {
         i = l*n + k
         tri1 = [i, i+1, i+n]
         tri2 = [i+1, i+n+1, i+n]
-        // terrainGrid.triangles = terrainGrid.triangles.concat([tri1, tri2])
-        terrainGrid.triangles.push(tri1)
-        terrainGrid.triangles.push(tri2)
+        terrainGrid.triangles = terrainGrid.triangles.concat([tri1, tri2])
+        // terrainGrid.triangles.push(tri1)
+        // terrainGrid.triangles.push(tri2)
     }
   }
 
@@ -92,9 +92,9 @@ function createRandomFaults(offset, slices, terrainGrid){
 
     if ((max_x - min_x) > 0) {
         for (let i = 0;i < terrainGrid.attributes.position.length; i++){
-            // scale it to bounds of the x or y coordinates
-            terrainGrid.attributes.position[i][2] = ((terrainGrid.attributes.position[i][2] - min_z)/(max_z - min_z))*((max_x - min_x)*0.5)
-            // terrainGrid.attributes.position[i][2] = terrainGrid.attributes.position[i][2] * ((max_x - min_x))/2
+            // for vertical separation as post processing step
+            terrainGrid.attributes.position[i][2] = ((terrainGrid.attributes.position[i][2] - min_z)/(max_z - min_z))*((max_x - min_x)*0.45)
+            terrainGrid.attributes.position[i][2] = terrainGrid.attributes.position[i][2] * ((max_x - min_x)*0.45)/2
         }
     }
 

@@ -48,7 +48,8 @@ function draw() {
 
     gl.bindVertexArray(geom.vao)
 
-    gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), normalize([2,2,-3]))
+    gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), normalize([2,2,-3])) // light dir
+    gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
     gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
