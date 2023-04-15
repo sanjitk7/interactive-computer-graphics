@@ -2,6 +2,7 @@
 
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 
+var useSpecular = false
 // our initial plane shape
 var land_plane =
     {"triangles":
@@ -48,6 +49,8 @@ function draw() {
 
     gl.bindVertexArray(geom.vao)
 
+    // do diffuse lighting by default and specular if chosen
+
     let lightdir =  normalize([1,1,-2])
     let halfway = normalize(add(lightdir, [0,0,1]))
 
@@ -55,6 +58,9 @@ function draw() {
     gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
     gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
+
+    gl.uniform1f(gl.getUniformLocation(program, 'useSpecular'), useSpecular)
+
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
     gl.drawElements(geom.mode, geom.count, geom.type, 0)
@@ -99,6 +105,13 @@ async function setup(event) {
 async function setupScene(scene, options){
     console.log("setupScene called with: scene = ", scene, " ,options = ",options)
 
+    if (options.specular){
+        window.useSpecular = 1
+        console.log("specular is set to true")
+    } else{
+        window.useSpecular = 0
+        console.log("specular is set to false")
+    }
     
     land_plane_with_grid = computeTerrainGridTriangles(5, options.resolution)
     console.log("terrainGrid:",terrainGrid)
