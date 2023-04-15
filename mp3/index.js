@@ -3,6 +3,7 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 
 var useSpecular = false
+var useColorRamp = false
 // our initial plane shape
 var land_plane =
     {"triangles":
@@ -60,6 +61,7 @@ function draw() {
     gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
 
     gl.uniform1f(gl.getUniformLocation(program, 'useSpecular'), useSpecular)
+    gl.uniform1f(gl.getUniformLocation(program, 'useColorRamp'), useColorRamp)
 
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
@@ -105,12 +107,22 @@ async function setup(event) {
 async function setupScene(scene, options){
     console.log("setupScene called with: scene = ", scene, " ,options = ",options)
 
+
+    // setting global flags for uniforms based on scene-option-tree
     if (options.specular){
         window.useSpecular = 1
         console.log("specular is set to true")
     } else{
         window.useSpecular = 0
         console.log("specular is set to false")
+    }
+
+    if (options.colorramp){
+        window.useColorRamp = 1
+        console.log("color ramp is set to true")
+    } else{
+        window.useColorRamp = 0
+        console.log("color ramp is set to false")
     }
     
     land_plane_with_grid = computeTerrainGridTriangles(5, options.resolution)
