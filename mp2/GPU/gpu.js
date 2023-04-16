@@ -12,7 +12,6 @@ function draw4(milliseconds) {
 
     gl.drawElements(geom.mode, geom.count, geom.type, 0) // then draw things
 
-    // requestAnimationFrame calls its callback at as close to your screen's refresh rate as it can manage; its argument is a number of milliseconds that have elapsed since the page was first loaded.
     requestAnimationFrame(draw4)
 }
 
@@ -29,5 +28,3 @@ async function setup_gpu(event) {
     console.log("gpu setup is called and data is : ",data)
     draw4()
 }
-
-// window.addEventListener('load',setup)

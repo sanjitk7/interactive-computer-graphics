@@ -11,9 +11,8 @@ function draw5(milliseconds) {
 
     gl.bindVertexArray(geom.vao)
 
-    gl.drawElements(geom.mode, geom.count, geom.type, 0) // then draw things
+    gl.drawElements(geom.mode, geom.count, geom.type, 0) 
 
-    // requestAnimationFrame calls its callback at as close to your screen's refresh rate as it can manage; its argument is a number of milliseconds that have elapsed since the page was first loaded.
     requestAnimationFrame(draw5)
 }
 
@@ -25,12 +24,9 @@ async function setup_psych(event) {
     let fs = await fetch('psychedelic/mp2-psych-opt-fs.glsl').then(res => res.text())
     compileAndLinkGLSL(vs,fs)
     let data = await fetch('psychedelic/fullCanvasQuad.json').then(r=>r.json())
-    // let data = await fetch('required/logo.json').then(r=>r.json())
     
     window.geom = setupGeomery(data)
     
     console.log("psych setup is called and data is : ",data)
     draw5()
 }
-
-// window.addEventListener('load',setup)

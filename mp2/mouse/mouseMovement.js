@@ -1,15 +1,17 @@
+
+// here we use the current mouse position data taken from a js event handler to apply translation to wards that direction - logo moves in same direction at same speed (for 10 points)
 function draw6(milliseconds) {
 
     // console.log("mousePosition:",mousePosition)
 
     // using the translation and rotation matrix creating functions provided in the examples of readings
-    window.translation = m4trans(mousePosition.x/1000, -(mousePosition.y/1000),0)
+    window.translation = m4trans(mousePosition.x/500, -(mousePosition.y/500),0)
     window.scale = m4scale(0.5,0.5,0)
 
     gl.clear(gl.COLOR_BUFFER_BIT) 
-    gl.useProgram(program)        // pick the shaders
+    gl.useProgram(program) 
 
-    // values that do not vary between vertexes or fragments are called "uniforms"
+    // uniforms
     let secondsBindPoint = gl.getUniformLocation(program, 'seconds')
     let translationMatrixBindingPoint = gl.getUniformLocation(program, 'translationMatrix')
     let scaleMatrixBindingPoint = gl.getUniformLocation(program, "scaleMatrix" )
@@ -22,12 +24,11 @@ function draw6(milliseconds) {
     gl.uniformMatrix4fv(initMatrixBindingPoint, false, initMatrix)
 
 
-    gl.bindVertexArray(geom.vao)  // and the buffers
+    gl.bindVertexArray(geom.vao) 
 
 
-    gl.drawElements(geom.mode, geom.count, geom.type, 0) // then draw things
+    gl.drawElements(geom.mode, geom.count, geom.type, 0) 
 
-    // requestAnimationFrame calls its callback at as close to your screen's refresh rate as it can manage; its argument is a number of milliseconds that have elapsed since the page was first loaded.
     requestAnimationFrame(draw6)
 }
 

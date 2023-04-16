@@ -11,8 +11,8 @@ void main() {
 
     vColor = color;
 
-    float ang = 2.399963229728653 * float(gl_VertexID) + 2.0*seconds;
+    float ang =  float(gl_VertexID) + 6.0*seconds;
 
-    gl_Position = position + vec4(0.05*cos(ang), 0.05*sin(ang), 0, 0);
+    gl_Position = position + vec4(0.07*cos(ang), 0.15*sin(ang), 1.5*sin(ang), 1);
 }
 

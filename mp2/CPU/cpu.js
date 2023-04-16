@@ -50,6 +50,7 @@ function cpuSetupGeometry(geom) {
     }
 }
 
+// HERE VERTEX POSITION IS UPDATED IN CPU MEMORY BY RANDOMLY CHANGING THE VALUE OF EACH INDIVIDUAL VERTEX BY A RANDOM OFFSET TO THE LEFT OR RIGHT WITH 50-50 ODDS
 function draw3(milliseconds) {
 
     gl.clear(gl.COLOR_BUFFER_BIT) 
@@ -59,8 +60,6 @@ function draw3(milliseconds) {
 
     gl.bindVertexArray(geom.vao)
 
-    
-    // HERE VERTEX POSITION IS UPDATED IN CPU MEMORY BY RANDOMLY CHANGING THE VALUE OF EACH INDIVIDUAL VERTEX BY A RANDOM OFFSET TO THE LEFT OR RIGHT WITH 50-50 ODDS
 
     //change the vertex positions here in the f32 array before binding them again
     
@@ -85,7 +84,7 @@ function draw3(milliseconds) {
     requestAnimationFrame(draw3)
 }
 
-
+// random number generation
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }

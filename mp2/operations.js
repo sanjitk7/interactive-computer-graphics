@@ -48,3 +48,7 @@ const m4mul = (...args) => args.reduce((m1,m2) => {
     ans[r+c*4] = m4rowdot(m1,r,m4col(m2,c))
   return ans // m*m
 })
+
+const add = (x,y) => x.map((e,i)=>e+y[i])
+const sub = (x,y) => x.map((e,i)=>e-y[i])
+const mul = (x,s) => x.map(e=>e*s)

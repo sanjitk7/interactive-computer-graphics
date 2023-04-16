@@ -1,6 +1,8 @@
+// create 3 different matrices to apply the 3 different transformations - pass them as uniforms and transform inside vertex shader
+
 function draw1(milliseconds) {
 
-    // using the translation and rotation matrix creating functions provided in the examples of readings
+    // using the translation, rotation and scale matrices creating functions provided in the examples of readings
     window.translation = m4trans(Math.sin(milliseconds/1000), (Math.tanh(milliseconds/2000))-0.5, 0)
     window.rotation = m4rotZ(milliseconds/1000)
     window.scale = m4scale(Math.cos((milliseconds/1000)*0.75),Math.cos((milliseconds/1000)*0.75),0)
@@ -9,7 +11,7 @@ function draw1(milliseconds) {
     gl.clear(gl.COLOR_BUFFER_BIT) 
     gl.useProgram(program)        // pick the shaders
 
-    // values that do not vary between vertexes or fragments are called "uniforms"
+
     let secondsBindPoint = gl.getUniformLocation(program, 'seconds')
     let translationMatrixBindingPoint = gl.getUniformLocation(program, 'translationMatrix')
     let rotationMatrixBindingPoint = gl.getUniformLocation(program, 'rotationMatrix')
@@ -29,7 +31,6 @@ function draw1(milliseconds) {
 
     gl.drawElements(geom.mode, geom.count, geom.type, 0) // then draw things
 
-    // requestAnimationFrame calls its callback at as close to your screen's refresh rate as it can manage; its argument is a number of milliseconds that have elapsed since the page was first loaded.
     requestAnimationFrame(draw1)
 }
 

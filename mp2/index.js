@@ -30,7 +30,7 @@ function radioChanged() {
 
 // resize the canvas for better visibility of the animation
 function resizeCanvas(){
-    let c = document.getElementById("myCanvas")
+    window.c = document.getElementById("myCanvas")
     c.height = window.innerHeight
     c.width = window.innerWidth
     if (c.width<c.height){
