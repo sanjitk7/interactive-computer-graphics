@@ -140,7 +140,7 @@ async function setupScene(scene, options){
     // add surface normals to our polygon created for diffuse lighting 
     addNormals(land_plane_with_sph)
 
-    window.geom = setupGeomery(land_plane_with_faults)
+    window.geom = setupGeomery(land_plane_with_sph)
 }
 
 window.addEventListener('load',setup)
