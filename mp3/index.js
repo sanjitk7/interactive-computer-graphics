@@ -126,7 +126,7 @@ async function setupScene(scene, options){
     }
     
     land_plane_with_grid = computeTerrainGridTriangles(5, options.resolution)
-    console.log("terrainGrid:",terrainGrid)
+    console.log("terrainGrid:",land_plane_with_grid)
 
     land_plane_with_faults = createRandomFaults(5, options.slices, land_plane_with_grid)
 
@@ -135,11 +135,10 @@ async function setupScene(scene, options){
 
     land_plane = land_plane_with_faults
 
+    land_plane_with_sph = spheroidal(land_plane_with_faults, options.spheroidal, options.resolution)
+
     // add surface normals to our polygon created for diffuse lighting 
-    addNormals(land_plane_with_faults)
-
-
-    // console.log("land_plane:",land_plane_with_faults)
+    addNormals(land_plane_with_sph)
 
     window.geom = setupGeomery(land_plane_with_faults)
 }
