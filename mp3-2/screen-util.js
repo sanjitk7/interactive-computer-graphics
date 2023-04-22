@@ -15,3 +15,7 @@ function fillScreen() {
         window.p = m4perspNegZ(0.1, 10, 1.5, canvas.width, canvas.height)
     }
 }
+
+window.keysBeingPressed = {}
+window.addEventListener('keydown', event => keysBeingPressed[event.key] = true)
+window.addEventListener('keyup', event => keysBeingPressed[event.key] = false)
