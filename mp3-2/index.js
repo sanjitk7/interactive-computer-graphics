@@ -1,8 +1,6 @@
 // Using a fixed object rotating to start with
 
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
-
-var useColorRamp = false
 // our initial plane shape
 var land_plane =
     {"triangles":
@@ -28,6 +26,9 @@ window.x = 0.0
 window.y = 0.0
 window.z = 0.0
 
+// camera directions
+window.pitch = 0.0
+window.yaw = 0.0
 
 /** Draw one frame */
 function draw() {
@@ -40,7 +41,7 @@ function draw() {
     // do diffuse lighting by default and specular if chosen
 
     let lightdir =  normalize([1,1,-2])
-    let halfway = normalize(add(lightdir, [0,0,1]))
+    let halfway = normalize(add(lightdir, [1,1,1]))
 
     gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), lightdir) // light dir
     gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
@@ -77,13 +78,29 @@ function timeStep(milliseconds) {
     } else if (keysBeingPressed["d"]){
         window.x -= 0.1
         console.log("move one step to the right!")
+    } else if (keysBeingPressed["ArrowUp"]){
+        window.pitch -= 0.01
+        console.log("turn camera up!")
+    } else if (keysBeingPressed["ArrowDown"]){
+        window.pitch += 0.01
+        console.log("turn camera down!")
+    } else if (keysBeingPressed["ArrowLeft"]){
+        window.yaw += 0.01
+        console.log("turn camera left!")
+    } else if (keysBeingPressed["ArrowRight"]){
+        window.yaw -= 0.01
+        console.log("turn camera right!")
     }
 
-    window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
+    // change by translating view coordinates on the left to move camera
+    // window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
 
     window.v = m4mul(
         m4trans(window.x, window.y, window.z),
-        m4view([2,-5,5], [0,0,0], [0,1,0])
+        // m4view([2,-5,5], [yaw,0,pitch], [0,1,0])
+        m4rotX(pitch),
+        m4rotY(yaw),
+        window.initial_view
     )
 
     draw()
@@ -108,8 +125,13 @@ async function setup(event) {
 
     slices = 100
     resolution = 50
+
+    // inital matrix on render
     window.m = m4rotY(0.4)
-    // window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
+    window.initial_view = m4mul(
+        m4rotX(-0.4),
+        m4view([2,-5,5], [0,0,0], [0,1,0])
+    )
 
     land_plane_with_grid = computeTerrainGridTriangles(5, resolution)
     land_plane_with_faults = createRandomFaults(5, slices, land_plane_with_grid)
