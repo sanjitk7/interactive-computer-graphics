@@ -45,7 +45,7 @@ This is done by 3 sub parts - 1. selecting a random p in the grid, 2. selecting 
 */
 function createRandomFaults(offset, slices, terrainGrid){
 
-    console.log("offset:",offset)
+    // console.log("offset:",offset)
     pi = 3.141592653
     fault_change = 0.007
     for (let i = 0;i < slices; i++){
@@ -55,7 +55,7 @@ function createRandomFaults(offset, slices, terrainGrid){
 
         random_n_vector = [Math.cos(random_angle), Math.sin(random_angle), 0]
 
-        console.log("random_p:",random_p)
+        // console.log("random_p:",random_p)
 
         // for each vertex
         for (let j = 0; j < terrainGrid.attributes.position.length ; j++){

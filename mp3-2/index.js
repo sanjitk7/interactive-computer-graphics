@@ -2,7 +2,6 @@
 
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 
-var useSpecular = false
 var useColorRamp = false
 // our initial plane shape
 var land_plane =
@@ -10,11 +9,6 @@ var land_plane =
         [[0,1,2]
         ,[2,3,0]
         ]
-        // [[3,2,1],
-        //  [2,3,0],
-        //  [1,2,0],
-        //  [0,3,1]
-        // ]
     ,"attributes":
         {"position":
             [[-4.5,4.5,0.0]
@@ -22,19 +16,8 @@ var land_plane =
             ,[4.5, -4.5, 0.0]
             ,[ -4.5,-4.5, 0.0]
             ],
-            
-            // [[-0.5,-0.5,-0.5]
-            // ,[ 0.5, 0.5,-0.5]
-            // ,[-0.5, 0.5, 0.5]
-            // ,[ 0.5,-0.5, 0.5]
-            // ]
 
-            // "color" : [
-            //     [0.0,1.0,0.0],
-            //     [0.0,1.0,0.0],
-            //     [0.0,1.0,0.0],
-            //     [0.0,1.0,0.0]
-            // ]
+        
               
         }
     }
@@ -60,7 +43,6 @@ function draw() {
     gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
     gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
 
-    gl.uniform1f(gl.getUniformLocation(program, 'useSpecular'), useSpecular)
     gl.uniform1f(gl.getUniformLocation(program, 'useColorRamp'), useColorRamp)
 
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
@@ -101,15 +83,28 @@ async function setup(event) {
     // do terrain setup
 
     slices = 100
-    resolution = 100
+    resolution = 50
     land_plane_with_grid = computeTerrainGridTriangles(5, resolution)
     land_plane_with_faults = createRandomFaults(5, slices, land_plane_with_grid)
     // let monkey = await fetch('../playground3/monkey.json').then(res => res.json())
 
     // add surface normals to our polygon created for diffuse lighting 
     addNormals(land_plane_with_faults)
-    window.geom = setupGeomery(land_plane_with_faults)
 
+
+    // texture
+    let img = new Image();
+    img.src = "texture.jpeg";
+    img.addEventListener("load", (event) => {
+        setUpImage(img, 0, gl);
+    });
+
+
+    // add texture coordinates
+    addTexture(land_plane_with_faults)
+    // console.log()
+
+    window.geom = setupGeomery(land_plane_with_faults)
     // window.geom = setupGeomery(land_plane)
     fillScreen()
     window.addEventListener('resize', fillScreen)
@@ -151,7 +146,7 @@ async function setupScene(scene, options){
 
     land_plane = land_plane_with_faults
 
-    land_plane_with_sph = spheroidal(land_plane_with_faults, options.spheroidal, options.resolution)
+
 
     // add surface normals to our polygon created for diffuse lighting 
     addNormals(land_plane_with_sph)

@@ -1,7 +1,7 @@
 // adding normals for diffuse lighting
 function addNormals(geom) {
 
-    console.log("geom addNormal: ", geom)
+    // console.log("geom addNormal: ", geom)
     geom.attributes.normal = []
     for(let i=0; i<geom.attributes.position.length; i+=1) {
         geom.attributes.normal.push([0,0,0])
