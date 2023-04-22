@@ -7,12 +7,12 @@ function setUpImage(imageObject, slot, glx) {
     glx.texParameteri(glx.TEXTURE_2D, glx.TEXTURE_MIN_FILTER, glx.LINEAR_MIPMAP_LINEAR);
     glx.texParameteri(glx.TEXTURE_2D, glx.TEXTURE_MAG_FILTER, glx.LINEAR);
     glx.texImage2D(
-        glx.TEXTURE_2D, // destination slot
-        0, // no mipmapping
-        glx.RGBA, // how to store it in graphics memory
-        glx.RGBA, // how it is stored in the image object
-        glx.UNSIGNED_BYTE, // size of a singlxe pixel-color in HTML
-        imageObject, // source data
+        glx.TEXTURE_2D,
+        0,
+        glx.RGBA,
+        glx.RGBA,
+        glx.UNSIGNED_BYTE,
+        imageObject, 
     );
     glx.generateMipmap(glx.TEXTURE_2D)
 }
@@ -20,8 +20,8 @@ function setUpImage(imageObject, slot, glx) {
 function addTexture(grid){
     console.log("addTexture")
     grid.attributes.texture = []
-    let tex = new Array(grid.attributes.position.length)
+    let texCoordinates = new Array(grid.attributes.position.length)
     for(let i=0; i<grid.attributes.position.length; i+=1) 
-        tex[i] = [grid.attributes.position[i][0], grid.attributes.position[i][1]]
-        grid.attributes.texture = tex;
+        texCoordinates[i] = [grid.attributes.position[i][0], grid.attributes.position[i][1]]
+        grid.attributes.texture = texCoordinates;
 }

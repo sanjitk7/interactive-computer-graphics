@@ -22,7 +22,11 @@ var land_plane =
         }
     }
 
-// drawing and setting up a basic shape
+
+// movement directions
+window.x = 0.0
+window.y = 0.0
+window.z = 0.0
 
 
 /** Draw one frame */
@@ -63,13 +67,24 @@ function timeStep(milliseconds) {
 
     if (keysBeingPressed["w"]){
         console.log("move one step forward!")
+        window.z += 0.1
     } else if (keysBeingPressed["s"]){
         console.log("move one step backward!")
+        window.z -= 0.1
     } else if (keysBeingPressed["a"]){
+        window.x += 0.1
         console.log("move one step to the left!")
     } else if (keysBeingPressed["d"]){
+        window.x -= 0.1
         console.log("move one step to the right!")
     }
+
+    window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
+
+    window.v = m4mul(
+        m4trans(window.x, window.y, window.z),
+        m4view([2,-5,5], [0,0,0], [0,1,0])
+    )
 
     draw()
     requestAnimationFrame(timeStep)
@@ -94,7 +109,7 @@ async function setup(event) {
     slices = 100
     resolution = 50
     window.m = m4rotY(0.4)
-    window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
+    // window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
 
     land_plane_with_grid = computeTerrainGridTriangles(5, resolution)
     land_plane_with_faults = createRandomFaults(5, slices, land_plane_with_grid)
@@ -123,47 +138,5 @@ async function setup(event) {
     requestAnimationFrame(timeStep)
 }
 
-
-// call back that is called with the options object from the html file's form (buttons) - contains parameters to be used while creation and rendering of scene
-async function setupScene(scene, options){
-    console.log("setupScene called with: scene = ", scene, " ,options = ",options)
-
-
-    // setting global flags for uniforms based on scene-option-tree
-    if (options.specular){
-        window.useSpecular = 1
-        console.log("specular is set to true")
-    } else{
-        window.useSpecular = 0
-        console.log("specular is set to false")
-    }
-
-    if (options.colorramp){
-        window.useColorRamp = 1
-        console.log("color ramp is set to true")
-    } else{
-        window.useColorRamp = 0
-        console.log("color ramp is set to false")
-    }
-    
-    slices = 100
-    resolution = 100
-    land_plane_with_grid = computeTerrainGridTriangles(5, resolution)
-    console.log("terrainGrid:",land_plane_with_grid)
-
-    land_plane_with_faults = createRandomFaults(5, slices, land_plane_with_grid)
-
-    console.log("terrainGridWithFaults:",land_plane)
-    // let monkey = await fetch('../playground3/monkey.json').then(res => res.json())
-
-    land_plane = land_plane_with_faults
-
-
-
-    // add surface normals to our polygon created for diffuse lighting 
-    addNormals(land_plane_with_sph)
-
-    window.geom = setupGeomery(land_plane_with_sph)
-}
 
 window.addEventListener('load',setup)

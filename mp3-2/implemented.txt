@@ -1,3 +1,0 @@
-Shiny
-Height-based color ramp
-Spheroidal Weathering
