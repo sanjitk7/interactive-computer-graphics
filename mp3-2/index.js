@@ -19,7 +19,7 @@ var land_plane =
     }
 
 
-    
+
 // movement directions
 window.x = 0.0
 window.y = 0.0
@@ -50,7 +50,7 @@ function draw() {
 
     gl.uniform1i(gl.getUniformLocation(program, 'image'), 0)
 
-    gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m_terrain))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
     gl.drawElements(geom.mode, geom.count, geom.type, 0)
 
@@ -67,7 +67,7 @@ function draw() {
 
         glObj.uniform1i(glObj.getUniformLocation(programObj, 'image'), 0)
 
-        glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'mv'), false, m4mul(v,m))
+        glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'mv'), false, m4mul(v,m_Obj))
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'p'), false, p)
         glObj.drawElements(geomObj.mode, geomObj.count, geomObj.type, 0)
     }
@@ -131,7 +131,9 @@ function timeStep(milliseconds) {
         window.initial_view
     )
 
-    window.m = m4rotY(seconds/10)
+    // window.m_terrain = m4rotY(seconds/10)
+    // window.m_Obj = m4rotY(seconds/10)
+    // window.m_Obj = m4trans(0,0,seconds/10)
 
     draw()
     requestAnimationFrame(timeStep)
@@ -152,8 +154,12 @@ async function setup(event) {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
     
     
-    // inital matrix on render
-    window.m = m4rotY(0.4)
+    // initial model matrices on render
+    window.m_terrain = m4rotY(0.4)
+    window.m_Obj = m4mul(
+        m4rotY(0.4),
+        m4trans(0,0,4)
+        )
     window.initial_view = m4mul(
         m4rotX(-0.4),
         m4view([2,-5,5], [0,0,0], [0,1,0])

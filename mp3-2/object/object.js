@@ -31,9 +31,10 @@ async function setup_object(event) {
     let textCube = await fetch("objectFiles/cube.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
     let textCow = await fetch("objectFiles/cow.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
     let textMonkey = await fetch("objectFiles/suzanne.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    let textTeapot = await fetch("objectFiles/teapot.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
 
     // let objGeom = objectToGeom(textTriangle)
-    let objGeom = await parseOBJ(textTriangle)
+    let objGeom = await parseOBJ(textTeapot)
 
 
     console.log("objGeom: ",objGeom)
