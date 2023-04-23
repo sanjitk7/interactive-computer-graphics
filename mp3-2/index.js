@@ -34,10 +34,11 @@ window.yaw = 0.0
 function draw() {
     gl.clearColor(...IlliniBlue) // f(...[1,2,3]) means f(1,2,3)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    
+    // set up stuff for terrain
     gl.useProgram(program)
 
     gl.bindVertexArray(geom.vao)
-
     // do diffuse lighting by default and specular if chosen
 
     let lightdir =  normalize([1,1,-2])
@@ -53,6 +54,31 @@ function draw() {
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
     gl.drawElements(geom.mode, geom.count, geom.type, 0)
+
+
+    // set up stuff for OBJ
+
+    if (glObj!=undefined && glObj!=undefined && window.geomObj!=undefined){
+        glObj.useProgram(programObj)
+
+        glObj.bindVertexArray(geom.vao)
+        // do diffuse lighting by default and specular if chosen
+    
+    
+        glObj.uniform3fv(glObj.getUniformLocation(programObj, 'lightdir'), lightdir) // light dir
+        glObj.uniform3fv(glObj.getUniformLocation(programObj, 'halfway'), halfway)
+        glObj.uniform3fv(glObj.getUniformLocation(programObj, 'lightcolor'), [1,1,1]) // white light
+        glObj.uniform4fv(glObj.getUniformLocation(programObj, 'color'), SomeGray)
+    
+        glObj.uniform1i(glObj.getUniformLocation(programObj, 'image'), 0)
+    
+        glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'mv'), false, m4mul(v,m))
+        glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'p'), false, p)
+        if (geomObj){
+            glObj.drawElements(geomObj.mode, geomObj.count, geomObj.type, 0)
+        }    
+    }
+    
 
 }
 
@@ -116,10 +142,11 @@ async function setup(event) {
     let vs = await fetch('shaders/mp3-vs.glsl').then(res => res.text())
     let fs = await fetch('shaders/mp3-fs.glsl').then(res => res.text())
 
-    window.program = compileAndLinkGLSL(vs,fs)
+    window.program = compileAndLinkGLSL(gl, vs,fs)
     gl.enable(gl.DEPTH_TEST)
     gl.enable(gl.BLEND)
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+    
     
     // do terrain setup
 
@@ -151,10 +178,10 @@ async function setup(event) {
 
     // add texture coordinates
     addTexture(land_plane_with_faults)
-    // console.log()
+    console.log(land_plane_with_faults)
 
     window.geom = setupGeomery(land_plane_with_faults)
-    // window.geom = setupGeomery(land_plane)
+
     fillScreen()
     window.addEventListener('resize', fillScreen)
     requestAnimationFrame(timeStep)

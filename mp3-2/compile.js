@@ -8,29 +8,30 @@ const IdentityMatrix = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1])
  * Given the source code of a vertex and fragment shader, compiles them,
  * and returns the linked program.
  */
-function compileAndLinkGLSL(vs_source, fs_source) {
-    let vs = gl.createShader(gl.VERTEX_SHADER)
-    gl.shaderSource(vs, vs_source)
+
+function compileAndLinkGLSL(which_gl, vs_source, fs_source) {
+    let vs = which_gl.createShader(which_gl.VERTEX_SHADER)
+    which_gl.shaderSource(vs, vs_source)
     gl.compileShader(vs)
-    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(vs))
+    if (!which_gl.getShaderParameter(vs, which_gl.COMPILE_STATUS)) {
+        console.error(which_gl.getShaderInfoLog(vs))
         throw Error("Vertex shader compilation failed")
     }
 
-    let fs = gl.createShader(gl.FRAGMENT_SHADER)
-    gl.shaderSource(fs, fs_source)
-    gl.compileShader(fs)
-    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(fs))
+    let fs = which_gl.createShader(which_gl.FRAGMENT_SHADER)
+    which_gl.shaderSource(fs, fs_source)
+    which_gl.compileShader(fs)
+    if (!which_gl.getShaderParameter(fs, which_gl.COMPILE_STATUS)) {
+        console.error(which_gl.getShaderInfoLog(fs))
         throw Error("Fragment shader compilation failed")
     }
 
-    let program = gl.createProgram()
-    gl.attachShader(program, vs)
-    gl.attachShader(program, fs)
-    gl.linkProgram(program)
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error(gl.getProgramInfoLog(program))
+    let program = which_gl.createProgram()
+    which_gl.attachShader(program, vs)
+    which_gl.attachShader(program, fs)
+    which_gl.linkProgram(program)
+    if (!which_gl.getProgramParameter(program, which_gl.LINK_STATUS)) {
+        console.error(which_gl.getProgramInfoLog(program))
         throw Error("Linking failed")
     }
     
