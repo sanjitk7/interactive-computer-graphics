@@ -11,7 +11,7 @@ async function parseOBJ(text) {
 
     // let text = await fetch(file).then(res => res.text())
 
-    var data_dict = {"attributes":{"position":[], "normal":[], "texture":[], "color":[]}, "triangles": []};
+    var data_dict = {"attributes":{"position":[], "normal":[], "texture":[], "objcolor":[]}, "triangles": []};
     var lines = text.split('\n')
     
     var vertex = []
@@ -63,7 +63,7 @@ async function parseOBJ(text) {
         data_dict.attributes.position[i] = vertex[i]
         data_dict.attributes.normal[i] = [1, 1, 1]
         data_dict.attributes.texture[i] = [0,0]
-        data_dict.attributes.color[i] = color[i]   
+        data_dict.attributes.objcolor[i] = color[i]   
     }
 
     for (var i = 0; i < lines.length; i++) {

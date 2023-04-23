@@ -1,4 +1,5 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
+var once = false
 // our initial plane shape
 var land_plane =
     {"triangles":
@@ -46,7 +47,6 @@ function draw() {
     gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), lightdir) // light dir
     gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
-    gl.uniform4fv(gl.getUniformLocation(program, 'color'), SomeGray)
 
     gl.uniform1i(gl.getUniformLocation(program, 'image'), 0)
 
@@ -57,15 +57,20 @@ function draw() {
     // console.log("objLoad",OBJLoad)
 
     if (OBJLoad) {
+        if (!once){
+            console.log("OBJ fin loading1: ", objGeom)
+            console.log("OBJ fin loading2: ", geomObj)
+            once = true
+        }
         glObj.useProgram(programObj)
         glObj.bindVertexArray(geomObj.vao)
 
         glObj.uniform3fv(glObj.getUniformLocation(programObj, 'lightdir'), lightdir) // light dir
         glObj.uniform3fv(glObj.getUniformLocation(programObj, 'halfway'), halfway)
         glObj.uniform3fv(glObj.getUniformLocation(programObj, 'lightcolor'), [1,1,1]) // white light
-        glObj.uniform4fv(glObj.getUniformLocation(programObj, 'color'), SomeGray)
+        // glObj.uniform4fv(glObj.getUniformLocation(programObj, 'color'), SomeGray)
 
-        glObj.uniform1i(glObj.getUniformLocation(programObj, 'image'), 0)
+        // glObj.uniform1i(glObj.getUniformLocation(programObj, 'image'), 0)
 
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'mv'), false, m4mul(v,m_Obj))
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'p'), false, p)
@@ -131,8 +136,10 @@ function timeStep(milliseconds) {
         window.initial_view
     )
 
-    // window.m_terrain = m4rotY(seconds/10)
-    // window.m_Obj = m4rotY(seconds/10)
+    // spin terrain and OBJ for 360 view while debugging
+    // window.m_Obj = m4rotZ(seconds)
+    // window.m_terrain = m4rotX(seconds/10)
+    
     // window.m_Obj = m4trans(0,0,seconds/10)
 
     draw()
@@ -145,6 +152,8 @@ async function setup(event) {
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
         {antialias: false, depth:true, preserveDrawingBuffer:true}
     )
+
+    // shaders when texture does not exist
     let vs = await fetch('shaders/mp3-vs.glsl').then(res => res.text())
     let fs = await fetch('shaders/mp3-fs.glsl').then(res => res.text())
 
@@ -185,7 +194,7 @@ async function setup(event) {
 
     // add texture coordinates
     addTexture(land_plane_with_faults)
-    console.log(land_plane_with_faults)
+    console.log("final land plane",land_plane_with_faults)
 
     window.geom = setupGeomery(land_plane_with_faults)
 

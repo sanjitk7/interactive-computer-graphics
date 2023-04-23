@@ -69,6 +69,7 @@ function setupGeomery(geom) {
     gl.bindVertexArray(triangleArray)
 
     for(let name in geom.attributes) {
+        // console.log("creating geom buffer for attribute: ",name)
         let data = geom.attributes[name]
         supplyDataBuffer(data, program, name)
     }

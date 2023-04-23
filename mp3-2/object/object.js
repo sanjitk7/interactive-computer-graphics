@@ -25,6 +25,7 @@ async function setup_object(event) {
         setUpImage(img, 0, glObj);
     });
 
+    // HANDLE OBJECT FILE IF IT EXISTS ELSE DO NOTHING
     
     // object loading and parse text to geom structure
     let textTriangle = await fetch("objectFiles/triangle.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
@@ -33,15 +34,17 @@ async function setup_object(event) {
     let textMonkey = await fetch("objectFiles/suzanne.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
     let textTeapot = await fetch("objectFiles/teapot.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
 
+    let textExampleObject = await fetch("objectFiles/example.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+
     // let objGeom = objectToGeom(textTriangle)
-    let objGeom = await parseOBJ(textTeapot)
+    window.objGeom = await parseOBJ(textExampleObject)
 
 
-    console.log("objGeom: ",objGeom)
+    // console.log("objGeom: ",objGeom)
 
-    window.geomObj = setupGeomery(objGeom)
+    window.geomObj = setupGeomeryObj(objGeom)
     OBJLoad = true
-    console.log("window.geomObj",window.geomObj)
+    // console.log("window.geomObj",window.geomObj)
 
 
 

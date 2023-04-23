@@ -1,7 +1,6 @@
 #version 300 es
 precision highp float;
 
-uniform vec4 color;
 uniform vec3 lightdir;
 uniform vec3 lightcolor;
 uniform vec3 halfway;
