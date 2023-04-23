@@ -15,8 +15,18 @@ async function setup_object(event) {
     let textCow = await fetch("objectFiles/cow.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
     let textMonkey = await fetch("objectFiles/suzanne.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
     let textTeapot = await fetch("objectFiles/teapot.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
-
+    
     let textExampleObject = await fetch("objectFiles/example.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+
+    // custom file definition check
+    customObjectFileName = window.location.hash.substr(1)
+
+    if (customObjectFileName !== "") {
+        // console.log("Loading custom file ",customObjectFileName, "instead of example.obj")
+        textExampleObject = await fetch("objectFiles/"+customObjectFileName).then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    }
+
+
 
     // set variables that decide which shader to use
     if (textExampleObject.includes("vt")){
@@ -32,7 +42,7 @@ async function setup_object(event) {
         console.log("NO COLOR in selected object")
     }
 
-
+    
     // select shader
     window.glObj = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
