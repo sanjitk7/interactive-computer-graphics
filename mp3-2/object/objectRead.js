@@ -5,6 +5,22 @@ function objectToGeom(text) {
 
 }
 
+function checkObjHasColor(text){
+    let lines = text.split("\n")
+    for (let i = 0; i < lines.length; i++) {
+        let words = lines[i].split(" ").filter(function(e){return e});
+        if (words[0]=="v"){
+            console.log("hihi",words)
+            if (words.length==7){
+                console.log("hihi",words)
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+}
+
 
 
 async function parseOBJ(text) {

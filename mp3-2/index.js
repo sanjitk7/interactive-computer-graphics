@@ -1,5 +1,7 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 var once = false
+var use_texture_obj = false
+var use_color_obj = false
 // our initial plane shape
 var land_plane =
     {"triangles":
@@ -56,6 +58,7 @@ function draw() {
 
     // console.log("objLoad",OBJLoad)
 
+    // draw the object if object geometry is done setting up
     if (OBJLoad) {
         if (!once){
             console.log("OBJ fin loading1: ", objGeom)
@@ -76,15 +79,6 @@ function draw() {
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'p'), false, p)
         glObj.drawElements(geomObj.mode, geomObj.count, geomObj.type, 0)
     }
-    // console.log("geomObj from draw:",geomObj)
-    // console.log("geomObj from draw:",program)
-    // console.log("geom from draw:",geom)
-
-    // // set up stuff for OBJ
-
-    // glObj.useProgram(programObj)
-    // glObj.bindVertexArray(geomObj.vao)
-    // // do diffuse lighting by default and specular if chosen
 
 
     
@@ -204,5 +198,5 @@ async function setup(event) {
 }
 
 
-window.addEventListener('load',setup_object)
+
 window.addEventListener('load',setup)
