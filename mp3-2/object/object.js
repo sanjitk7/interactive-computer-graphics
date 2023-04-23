@@ -1,3 +1,5 @@
+var OBJLoad = false
+
 
 /** Compile, link, set up geometry */
 async function setup_object(event) {
@@ -31,13 +33,13 @@ async function setup_object(event) {
     let textMonkey = await fetch("objectFiles/suzanne.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
 
     // let objGeom = objectToGeom(textTriangle)
-    let objGeom = await parseOBJ(textCow)
+    let objGeom = await parseOBJ(textTriangle)
 
 
     console.log("objGeom: ",objGeom)
 
-    window.geomObj = setupGeomeryObj(objGeom)
-
+    window.geomObj = setupGeomery(objGeom)
+    OBJLoad = true
     console.log("window.geomObj",window.geomObj)
 
 
@@ -56,4 +58,4 @@ async function setup_object(event) {
 }
 
 
-window.addEventListener('load',setup_object)
+// window.addEventListener('load',setup_object)

@@ -1,5 +1,3 @@
-// Using a fixed object rotating to start with
-
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 // our initial plane shape
 var land_plane =
@@ -21,6 +19,7 @@ var land_plane =
     }
 
 
+    
 // movement directions
 window.x = 0.0
 window.y = 0.0
@@ -55,41 +54,42 @@ function draw() {
     gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
     gl.drawElements(geom.mode, geom.count, geom.type, 0)
 
+    // console.log("objLoad",OBJLoad)
 
-    // set up stuff for OBJ
-
-    if (glObj!=undefined && glObj!=undefined && window.geomObj!=undefined){
+    if (OBJLoad) {
         glObj.useProgram(programObj)
+        glObj.bindVertexArray(geomObj.vao)
 
-        glObj.bindVertexArray(geom.vao)
-        // do diffuse lighting by default and specular if chosen
-    
-    
         glObj.uniform3fv(glObj.getUniformLocation(programObj, 'lightdir'), lightdir) // light dir
         glObj.uniform3fv(glObj.getUniformLocation(programObj, 'halfway'), halfway)
         glObj.uniform3fv(glObj.getUniformLocation(programObj, 'lightcolor'), [1,1,1]) // white light
         glObj.uniform4fv(glObj.getUniformLocation(programObj, 'color'), SomeGray)
-    
+
         glObj.uniform1i(glObj.getUniformLocation(programObj, 'image'), 0)
-    
+
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'mv'), false, m4mul(v,m))
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'p'), false, p)
-        if (geomObj){
-            glObj.drawElements(geomObj.mode, geomObj.count, geomObj.type, 0)
-        }    
+        glObj.drawElements(geomObj.mode, geomObj.count, geomObj.type, 0)
     }
+    // console.log("geomObj from draw:",geomObj)
+    // console.log("geomObj from draw:",program)
+    // console.log("geom from draw:",geom)
+
+    // // set up stuff for OBJ
+
+    // glObj.useProgram(programObj)
+    // glObj.bindVertexArray(geomObj.vao)
+    // // do diffuse lighting by default and specular if chosen
+
+
+    
     
 
 }
 
 /** Compute any time-varying or animated aspects of the scene */
 function timeStep(milliseconds) {
-    let seconds = milliseconds / 1000;
-    
-    // window.m = m4mul(m4rotY(seconds/2), m4rotX(-Math.PI/2))
-    // window.m = m4mul(m4rotY(seconds/2), m4rotX(seconds))
-    // window.v = IdentityMatrix
-
+    seconds = milliseconds/100
     // console.log("KEY PRESS:", keysBeingPressed)
 
     if (keysBeingPressed["w"]){
@@ -120,14 +120,18 @@ function timeStep(milliseconds) {
 
     // change by translating view coordinates on the left to move camera
     // window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
-
+    
     window.v = m4mul(
         m4trans(window.x, window.y, window.z),
         // m4view([2,-5,5], [yaw,0,pitch], [0,1,0])
         m4rotX(pitch),
         m4rotY(yaw),
+        // m4rotZ(seconds/20),
+        // m4rotX(seconds/20),
         window.initial_view
     )
+
+    window.m = m4rotY(seconds/10)
 
     draw()
     requestAnimationFrame(timeStep)
@@ -148,23 +152,20 @@ async function setup(event) {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
     
     
-    // do terrain setup
-
-    slices = 100
-    resolution = 50
-
     // inital matrix on render
     window.m = m4rotY(0.4)
     window.initial_view = m4mul(
         m4rotX(-0.4),
         m4view([2,-5,5], [0,0,0], [0,1,0])
     )
+    
+    // do terrain setup
+
+    slices = 100
+    resolution = 50
 
     land_plane_with_grid = computeTerrainGridTriangles(5, resolution)
     land_plane_with_faults = createRandomFaults(5, slices, land_plane_with_grid)
-    // let monkey = await fetch('../playground3/monkey.json').then(res => res.json())
-
-    // add surface normals to our polygon created for diffuse lighting 
     addNormals(land_plane_with_faults)
 
 
@@ -188,4 +189,5 @@ async function setup(event) {
 }
 
 
+window.addEventListener('load',setup_object)
 window.addEventListener('load',setup)
