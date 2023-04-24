@@ -17,6 +17,7 @@ async function setup_object(event) {
     // let textTeapot = await fetch("objectFiles/teapot.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
     
     let textExampleObject = await fetch("example.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    let textureObjectImageName = "example"
 
     // custom file definition check
     customObjectFileName = window.location.hash.substr(1)
@@ -24,6 +25,7 @@ async function setup_object(event) {
     if (customObjectFileName !== "") {
         // console.log("Loading custom file ",customObjectFileName, "instead of example.obj")
         textExampleObject = await fetch("objectFiles/"+customObjectFileName).then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+        textureObjectImageName = customObjectFileName.slice(0,-4)
     }
 
 
@@ -59,6 +61,15 @@ async function setup_object(event) {
         let vs = await fetch('shaders/mp3-obj-vs-3.glsl').then(res => res.text())
         let fs = await fetch('shaders/mp3-obj-fs-3.glsl').then(res => res.text())
         window.programObj = compileAndLinkGLSL(glObj, vs,fs)
+        
+        // console.log("using texture image from 00 ",textureObjectImageName)
+        // texture set up
+        let imgObj = new Image()
+        imgObj.src = textureObjectImageName + ".jpg"
+        imgObj.addEventListener("load",(event)=>{
+            setUpImage(imgObj, 0, glObj);
+        })
+
     } else if (!use_color_obj) { // for triangle.obj and teapot.obj
         console.log("no color tex shader")
         let vs = await fetch('shaders/mp3-obj-vs-1.glsl').then(res => res.text())
@@ -77,12 +88,14 @@ async function setup_object(event) {
     glObj.blendFunc(glObj.SRC_ALPHA, glObj.ONE_MINUS_SRC_ALPHA)
     
 
-    // texture
-    let img = new Image();
-    img.src = "texture.jpeg";
-    img.addEventListener("load", (event) => {
-        setUpImage(img, 0, glObj);
-    });
+
+    console.log("using texture image from ",textureObjectImageName)
+    // // texture for example 
+    // let imgObj = new Image()
+    // imgObj.src = textureObjectImageName + ".jpg"
+    // imgObj.addEventListener("load",(event)=>{
+    //     setUpImage(imgObj, 0, glObj);
+    // })
 
 
     window.objGeom = await objectToGeom(textExampleObject)

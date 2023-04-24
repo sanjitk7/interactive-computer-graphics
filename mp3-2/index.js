@@ -21,8 +21,6 @@ var land_plane =
         }
     }
 
-
-
 // movement directions
 window.x = 0.0
 window.y = 0.0
