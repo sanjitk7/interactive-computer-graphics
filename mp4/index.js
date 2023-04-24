@@ -1,5 +1,6 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 const FoggyBackground = new Float32Array([0.590088, 0.586554, 0.554753, 1])
+
 var once = false
 var use_texture_obj = false
 var use_color_obj = false
@@ -16,15 +17,11 @@ var land_plane =
             ,[4.5, -4.5, 0.0]
             ,[ -4.5,-4.5, 0.0]
             ],
-
-        
-              
         }
     }
 
 // fog mode
 window.use_fog = false
-window.useShaderFog = 0
 
 // movement directions
 window.x = 0.0
@@ -52,7 +49,7 @@ function draw(milliseconds) {
     gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), lightdir) // light dir
     gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
-    gl.uniform1f(gl.getUniformLocation(program, 'fog'), useShaderFog)
+    gl.uniform1f(gl.getUniformLocation(program, 'fog'), use_fog)
 
     gl.uniform1i(gl.getUniformLocation(program, 'image'), 0)
 
@@ -119,36 +116,21 @@ function timeStep(milliseconds) {
         console.log("turn camera right!")
     }
 
-    // FOG: shader passing var has to be float not boolean 
-    if (use_fog) useShaderFog = 1 
-    else  useShaderFog = 0
-
 
     // change by translating view coordinates on the left to move camera
-    // window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
     
     window.v = m4mul(
         m4trans(window.x, window.y, window.z),
-        // m4view([2,-5,5], [yaw,0,pitch], [0,1,0])
         m4rotX(pitch),
         m4rotY(yaw),
-        // m4rotZ(seconds/20),
-        // m4rotX(seconds/20),
         window.initial_view
     )
-
-    // spin terrain and OBJ for 360 view while debugging
-    
-    // window.m_Obj = m4rotZ(seconds/10)
-    // window.m_terrain = m4trans(0,Math.cos(seconds/10),Math.cos(seconds/10))
-    
-    // window.m_Obj = m4trans(0,0,seconds/10)
 
     draw()
     requestAnimationFrame(timeStep)
 }
 
-/** Compile, link, set up geometry */
+/** Compile, link, set up geometry for Terrain only*/
 async function setup(event) {
     window.gl = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
@@ -190,16 +172,16 @@ async function setup(event) {
     addNormals(land_plane_with_faults)
 
 
-    // texture
+    // texture setup
     let img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = "texture.jpg";
     img.addEventListener("load", (event) => {
-        setUpImage(img, 0, gl);
+        setup_texture_gl(gl, img, 0);
     });
 
 
-    // add texture coordinates
+    // add texture coordinates similar to normals
     addTexture(land_plane_with_faults)
     console.log("final land plane",land_plane_with_faults)
 

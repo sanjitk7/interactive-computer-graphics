@@ -1,7 +1,7 @@
 var OBJLoad = false
 
 
-/** Compile, link, set up geometry */
+// setup shaders, compile and link geometry for OBJ files
 async function setup_object(event) {
     console.log("Object Setup")
 
@@ -23,7 +23,6 @@ async function setup_object(event) {
     customObjectFileName = window.location.hash.substr(1)
 
     if (customObjectFileName !== "") {
-        // console.log("Loading custom file ",customObjectFileName, "instead of example.obj")
         textExampleObject = await fetch("objectFiles/"+customObjectFileName).then((res) => res.text()).catch((e)=>console.log("object load failed!"));
         textureObjectImageName = customObjectFileName.slice(0,-4)
     }
@@ -62,12 +61,11 @@ async function setup_object(event) {
         let fs = await fetch('shaders/mp3-obj-fs-3.glsl').then(res => res.text())
         window.programObj = compileAndLinkGLSL(glObj, vs,fs)
         
-        // console.log("using texture image from 00 ",textureObjectImageName)
         // texture set up
         let imgObj = new Image()
         imgObj.src = textureObjectImageName + ".jpg"
         imgObj.addEventListener("load",(event)=>{
-            setUpImage(imgObj, 1, glObj);
+            setup_texture_gl(glObj, imgObj, 1);
         })
 
     } else if (!use_color_obj) { // for triangle.obj and teapot.obj
@@ -90,13 +88,6 @@ async function setup_object(event) {
 
 
     console.log("using texture image from ",textureObjectImageName)
-    // // texture for example 
-    // let imgObj = new Image()
-    // imgObj.src = textureObjectImageName + ".jpg"
-    // imgObj.addEventListener("load",(event)=>{
-    //     setUpImage(imgObj, 0, glObj);
-    // })
-
 
     window.objGeom = await objectToGeom(textExampleObject)
     
@@ -105,7 +96,6 @@ async function setup_object(event) {
 
     window.geomObj = setupGeomeryObj(objGeom)
     OBJLoad = true
-    // console.log("window.geomObj",window.geomObj)
     
     fillScreen()
     window.addEventListener('resize', fillScreen)

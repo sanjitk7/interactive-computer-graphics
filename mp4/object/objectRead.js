@@ -18,9 +18,6 @@ function checkObjHasColor(text) {
 }
 
 
-
-
-
 // creating webgl parseable js object form the OBJ file text
 async function objectToGeom(text) {
 
@@ -57,13 +54,13 @@ async function objectToGeom(text) {
       if (read_words[0]=="v") {
           // without colors - define color to be some random value
           if ((read_words.length-1) == 3){
-                console.log("color 3 v 222")
+                // console.log("color 3 v 222")
               vertex[vertex_idx] = [parseFloat(read_words[1]),parseFloat(read_words[2]),parseFloat(read_words[3].split("\r")[0])]
               color[vertex_idx] = SomeGray
           } 
           // with colors
           else if ((read_words.length-1)==6) {
-                console.log("color 6 v 222")
+                // console.log("color 6 v 222")
               vertex[vertex_idx] = [parseFloat(read_words[1]),parseFloat(read_words[2]),parseFloat(read_words[3].split("\r")[0])]
               color[vertex_idx] = [parseFloat(read_words[4]),parseFloat(read_words[5]),parseFloat(read_words[6].split("\r")[0])]
           }
