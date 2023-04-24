@@ -83,8 +83,7 @@ async function setup_object(event) {
     });
 
 
-    // let objGeom = objectToGeom(textTriangle)
-    window.objGeom = await parseOBJ(textExampleObject)
+    window.objGeom = await objectToGeom(textExampleObject)
     
 
     // console.log("objGeom: ",objGeom)
