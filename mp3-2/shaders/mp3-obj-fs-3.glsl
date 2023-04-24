@@ -22,6 +22,6 @@ void main() {
 
     vec3 col = vec3(texture(image, texCoord)[0], texture(image, texCoord)[1], texture(image, texCoord)[2]);
 
-    fragColor = vec4(currentColor.rgb * (lightcolor * lambert * col), float(currentColor.a));
+    fragColor = vec4(currentColor.rgb * (lightcolor * lambert * col ), float(currentColor.a));
 
 }

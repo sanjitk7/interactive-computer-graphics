@@ -31,7 +31,7 @@ window.pitch = 0.0
 window.yaw = 0.0
 
 /** Draw one frame */
-function draw() {
+function draw(milliseconds) {
     gl.clearColor(...IlliniBlue) // f(...[1,2,3]) means f(1,2,3)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     
@@ -41,8 +41,8 @@ function draw() {
     gl.bindVertexArray(geom.vao)
     // do diffuse lighting by default and specular if chosen
 
-    let lightdir =  normalize([1,1,-2])
-    let halfway = normalize(add(lightdir, [1,1,1]))
+    let lightdir =  normalize([1,1,2])
+    let halfway = normalize(add(lightdir, [0,0,0]))
 
     gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), lightdir) // light dir
     gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
@@ -79,9 +79,6 @@ function draw() {
     }
 
 
-    
-    
-
 }
 
 /** Compute any time-varying or animated aspects of the scene */
@@ -91,15 +88,15 @@ function timeStep(milliseconds) {
 
     if (keysBeingPressed["w"]){
         console.log("move one step forward!")
-        window.z += 0.1
+        window.z += 0.05
     } else if (keysBeingPressed["s"]){
         console.log("move one step backward!")
-        window.z -= 0.1
+        window.z -= 0.05
     } else if (keysBeingPressed["a"]){
-        window.x += 0.1
+        window.x += 0.05
         console.log("move one step to the left!")
     } else if (keysBeingPressed["d"]){
-        window.x -= 0.1
+        window.x -= 0.05
         console.log("move one step to the right!")
     } else if (keysBeingPressed["ArrowUp"]){
         window.pitch -= 0.01
@@ -129,8 +126,9 @@ function timeStep(milliseconds) {
     )
 
     // spin terrain and OBJ for 360 view while debugging
-    // window.m_Obj = m4rotZ(seconds)
-    // window.m_terrain = m4rotX(seconds/10)
+    
+    // window.m_Obj = m4rotZ(seconds/10)
+    // window.m_terrain = m4trans(0,Math.cos(seconds/10),Math.cos(seconds/10))
     
     // window.m_Obj = m4trans(0,0,seconds/10)
 
@@ -156,7 +154,11 @@ async function setup(event) {
     
     
     // initial model matrices on render
-    window.m_terrain = m4rotY(0.4)
+    window.m_terrain = m4mul(
+        m4trans(0,0,2),
+        m4rotY(0.4), 
+        m4rotX(Math.PI)
+        )
     window.m_Obj = m4mul(
         m4rotY(0.4),
         m4trans(0,0,4)
