@@ -12,7 +12,7 @@ out vec4 objFragColor;
 
 uniform mat4 p;
 uniform mat4 mv;
-uniform bool useSpecular;
+
 void main() {
     gl_Position = p * mv * position;
     fnormal = mat3(mv) * normal;

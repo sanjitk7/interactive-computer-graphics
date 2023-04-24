@@ -10,13 +10,13 @@ async function setup_object(event) {
     // HANDLE OBJECT FILE IF IT EXISTS ELSE DO NOTHING
     
     // object loading and parse text to geom structure
-    let textTriangle = await fetch("objectFiles/triangle.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
-    let textCube = await fetch("objectFiles/cube.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
-    let textCow = await fetch("objectFiles/cow.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
-    let textMonkey = await fetch("objectFiles/suzanne.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
-    let textTeapot = await fetch("objectFiles/teapot.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    // let textTriangle = await fetch("objectFiles/triangle.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    // let textCube = await fetch("objectFiles/cube.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    // let textCow = await fetch("objectFiles/cow.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    // let textMonkey = await fetch("objectFiles/suzanne.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    // let textTeapot = await fetch("objectFiles/teapot.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
     
-    let textExampleObject = await fetch("objectFiles/example.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
+    let textExampleObject = await fetch("example.obj").then((res) => res.text()).catch((e)=>console.log("object load failed!"));
 
     // custom file definition check
     customObjectFileName = window.location.hash.substr(1)
@@ -60,10 +60,12 @@ async function setup_object(event) {
         let fs = await fetch('shaders/mp3-obj-fs-3.glsl').then(res => res.text())
         window.programObj = compileAndLinkGLSL(glObj, vs,fs)
     } else if (!use_color_obj) { // for triangle.obj and teapot.obj
+        console.log("no color tex shader")
         let vs = await fetch('shaders/mp3-obj-vs-1.glsl').then(res => res.text())
         let fs = await fetch('shaders/mp3-obj-fs-1.glsl').then(res => res.text())
         window.programObj = compileAndLinkGLSL(glObj, vs,fs)
     } else if (use_color_obj){ // for cow.obj
+        console.log("color shader")
         let vs = await fetch('shaders/mp3-obj-vs-2.glsl').then(res => res.text())
         let fs = await fetch('shaders/mp3-obj-fs-2.glsl').then(res => res.text())
         window.programObj = compileAndLinkGLSL(glObj, vs,fs)
@@ -86,7 +88,7 @@ async function setup_object(event) {
     window.objGeom = await objectToGeom(textExampleObject)
     
 
-    // console.log("objGeom: ",objGeom)
+
 
     window.geomObj = setupGeomeryObj(objGeom)
     OBJLoad = true

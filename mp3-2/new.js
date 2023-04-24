@@ -29,6 +29,7 @@ async function parseOBJ(text) {
           vertex[vertex_idx] = [parseFloat(read_words[1]),parseFloat(read_words[2]),parseFloat(read_words[3].split("\r")[0])]
           color[vertex_idx] = SomeGray;
         } else if (read_words.length-1 == 6) {
+          console.log("color 6 v")
           vertex[vertex_idx] = [parseFloat(read_words[1]),parseFloat(read_words[2]),parseFloat(read_words[3].split("\r")[0])]
           color[vertex_idx] = [parseFloat(read_words[4]),parseFloat(read_words[5]),parseFloat(read_words[6].split("\r")[0])]
         }
