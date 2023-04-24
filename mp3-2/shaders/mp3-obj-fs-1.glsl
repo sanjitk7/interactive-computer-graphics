@@ -20,6 +20,6 @@ void main() {
     float blinn = pow(max(dot(-halfway, n), 0.0), 150.0);
     vec4 currentColor = tempcolor;
 
-    fragColor = vec4(currentColor.rgb * (lightcolor * lambert), float(currentColor.a));
+    fragColor = vec4(currentColor.rgb, float(currentColor.a));
 
 }

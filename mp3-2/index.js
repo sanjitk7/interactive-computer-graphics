@@ -161,7 +161,7 @@ async function setup(event) {
         )
     window.m_Obj = m4mul(
         m4rotY(0.4),
-        m4trans(0,0,4)
+        m4trans(-1,1,3)
         )
     window.initial_view = m4mul(
         m4rotX(-0.4),
