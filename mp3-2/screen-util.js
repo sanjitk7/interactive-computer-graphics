@@ -16,6 +16,18 @@ function fillScreen() {
     }
 }
 
+// input keys handling
 window.keysBeingPressed = {}
 window.addEventListener('keydown', event => keysBeingPressed[event.key] = true)
 window.addEventListener('keyup', event => keysBeingPressed[event.key] = false)
+
+window.use_fog = false
+
+// fog mode enable/disable
+window.addEventListener('keydown', (event) => {
+    // console.log("keyd", event.key)
+    if (event.key == "f"){
+        window.use_fog = (!use_fog)
+        console.log("fog mode is: ",use_fog)
+    }
+})

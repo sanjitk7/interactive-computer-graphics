@@ -3,3 +3,4 @@ OBJ loading - Basic
 OBJ loading - Vertex colors
 OBJ loading - Custom file
 OBJ loading - More attributes
+Fog

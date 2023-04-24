@@ -1,4 +1,5 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
+const FoggyBackground = new Float32Array([0.590088, 0.586554, 0.554753, 1])
 var once = false
 var use_texture_obj = false
 var use_color_obj = false
@@ -21,6 +22,10 @@ var land_plane =
         }
     }
 
+// fog mode
+window.use_fog = false
+window.useShaderFog = 0
+
 // movement directions
 window.x = 0.0
 window.y = 0.0
@@ -32,7 +37,7 @@ window.yaw = 0.0
 
 /** Draw one frame */
 function draw(milliseconds) {
-    gl.clearColor(...IlliniBlue) // f(...[1,2,3]) means f(1,2,3)
+    gl.clearColor(...FoggyBackground) // f(...[1,2,3]) means f(1,2,3)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     
     // set up stuff for terrain
@@ -47,6 +52,7 @@ function draw(milliseconds) {
     gl.uniform3fv(gl.getUniformLocation(program, 'lightdir'), lightdir) // light dir
     gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
+    gl.uniform1f(gl.getUniformLocation(program, 'fog'), useShaderFog)
 
     gl.uniform1i(gl.getUniformLocation(program, 'image'), 0)
 
@@ -81,6 +87,7 @@ function draw(milliseconds) {
 
 }
 
+
 /** Compute any time-varying or animated aspects of the scene */
 function timeStep(milliseconds) {
     seconds = milliseconds/100
@@ -88,29 +95,34 @@ function timeStep(milliseconds) {
 
     if (keysBeingPressed["w"]){
         console.log("move one step forward!")
-        window.z += 0.05
+        window.z += 0.02
     } else if (keysBeingPressed["s"]){
         console.log("move one step backward!")
-        window.z -= 0.05
+        window.z -= 0.02
     } else if (keysBeingPressed["a"]){
-        window.x += 0.05
+        window.x += 0.02
         console.log("move one step to the left!")
     } else if (keysBeingPressed["d"]){
-        window.x -= 0.05
+        window.x -= 0.02
         console.log("move one step to the right!")
     } else if (keysBeingPressed["ArrowUp"]){
-        window.pitch -= 0.01
+        window.pitch -= 0.007
         console.log("turn camera up!")
     } else if (keysBeingPressed["ArrowDown"]){
-        window.pitch += 0.01
+        window.pitch += 0.007
         console.log("turn camera down!")
     } else if (keysBeingPressed["ArrowLeft"]){
-        window.yaw += 0.01
+        window.yaw += 0.007
         console.log("turn camera left!")
     } else if (keysBeingPressed["ArrowRight"]){
-        window.yaw -= 0.01
+        window.yaw -= 0.007
         console.log("turn camera right!")
     }
+
+    // FOG: shader passing var has to be float not boolean 
+    if (use_fog) useShaderFog = 1 
+    else  useShaderFog = 0
+
 
     // change by translating view coordinates on the left to move camera
     // window.v = m4view([2,-5,5], [0,0,0], [0,1,0])
