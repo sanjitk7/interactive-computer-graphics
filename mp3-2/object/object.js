@@ -49,11 +49,21 @@ async function setup_object(event) {
         {antialias: false, depth:true, preserveDrawingBuffer:true}
     )
 
-    if (!use_color_obj) {
+    // color is an extra attribute since in the original terrain MP3 i set a single manually def color in the shaders (but normals were handled)
+    // here i define normals for objects if they arent defined in the OBJ - so no separate shader for them (all shaders handle normals)
+    
+    
+    // for suzanne.obj
+    if (use_texture_obj){
+        console.log("texture shader")
+        let vs = await fetch('shaders/mp3-obj-vs-3.glsl').then(res => res.text())
+        let fs = await fetch('shaders/mp3-obj-fs-3.glsl').then(res => res.text())
+        window.programObj = compileAndLinkGLSL(glObj, vs,fs)
+    } else if (!use_color_obj) { // for triangle.obj and teapot.obj
         let vs = await fetch('shaders/mp3-obj-vs-1.glsl').then(res => res.text())
         let fs = await fetch('shaders/mp3-obj-fs-1.glsl').then(res => res.text())
         window.programObj = compileAndLinkGLSL(glObj, vs,fs)
-    } else if (use_color_obj){
+    } else if (use_color_obj){ // for cow.obj
         let vs = await fetch('shaders/mp3-obj-vs-2.glsl').then(res => res.text())
         let fs = await fetch('shaders/mp3-obj-fs-2.glsl').then(res => res.text())
         window.programObj = compileAndLinkGLSL(glObj, vs,fs)
