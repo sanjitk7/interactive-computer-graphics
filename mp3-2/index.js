@@ -71,7 +71,7 @@ function draw() {
         glObj.uniform3fv(glObj.getUniformLocation(programObj, 'lightcolor'), [1,1,1]) // white light
         // glObj.uniform4fv(glObj.getUniformLocation(programObj, 'color'), SomeGray)
 
-        glObj.uniform1i(glObj.getUniformLocation(programObj, 'image'), 0)
+        glObj.uniform1i(glObj.getUniformLocation(programObj, 'image'), 1)
 
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'mv'), false, m4mul(v,m_Obj))
         glObj.uniformMatrix4fv(glObj.getUniformLocation(programObj, 'p'), false, p)
@@ -178,7 +178,8 @@ async function setup(event) {
 
     // texture
     let img = new Image();
-    img.src = "texture.jpeg";
+    img.crossOrigin = 'anonymous';
+    img.src = "texture.jpg";
     img.addEventListener("load", (event) => {
         setUpImage(img, 0, gl);
     });

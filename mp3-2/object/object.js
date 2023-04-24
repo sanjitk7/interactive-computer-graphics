@@ -67,7 +67,7 @@ async function setup_object(event) {
         let imgObj = new Image()
         imgObj.src = textureObjectImageName + ".jpg"
         imgObj.addEventListener("load",(event)=>{
-            setUpImage(imgObj, 0, glObj);
+            setUpImage(imgObj, 1, glObj);
         })
 
     } else if (!use_color_obj) { // for triangle.obj and teapot.obj
