@@ -4,7 +4,7 @@ from PIL import Image
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere","sun"]
+    legal_command_start = ["png", "sphere","sun","color"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -56,6 +56,9 @@ def initScene(commands):
             light_source["diffuse"] = default_diffuse
         
             light_sources.append(light_source)
+            
+        if command[0] == "color":
+            default_diffuse = np.array([float(command[1]),float(command[2]),float(command[3])])
     
     return image, objects, light_sources, light_bounces
         
