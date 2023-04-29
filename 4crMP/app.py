@@ -35,17 +35,20 @@ if __name__=="__main__":
     commands = get_commands_from_input(f_path)
     
     # stage 1
-    image, objects, light_bounces = initScene(commands)
+    image, objects, lights, light_bounces = initScene(commands)
     
     # stage 2
     width, height = image.size
     
     # default sun
-    lights = [{
+    default_lights = [{
         "type": "sun",
         "position": np.array([1,0,0]),
         "diffuse": np.array([0,0,0])
     }]
+    
+    if len(lights) == 0:
+        lights = default_lights
 
     # default up, forward
     eye = np.array([0,0,0])
@@ -94,27 +97,27 @@ if __name__=="__main__":
                     
                     ray_thing_intersection = origin + t * ray_direction
                     
-                    print("ray_thing_intersection:", ray_thing_intersection)
+                    # print("ray_thing_intersection:", ray_thing_intersection)
                     
                     if first_object["type"] == "sphere":
                         object_surface_normal = normalize(ray_thing_intersection - first_object["center"])
-                        print("surf norm ",object_surface_normal)
+                        # print("surf norm ",object_surface_normal)
                     
                     
                     origin_offset = ray_thing_intersection + (1e-5*object_surface_normal)
-                    print("origin_offset", origin_offset)
+                    # print("origin_offset", origin_offset)
                     
                     if light["type"] == "sun":
                         light_intersection = normalize(light["position"])
-                        print("LI", light_intersection)
+                        # print("LI", light_intersection)
                     
                     next_object, next_object_t = nearest_intersected_object(objects, origin_offset, light_intersection)
                     
-                    print("next_object_t:",next_object_t)
+                    # print("next_object_t:",next_object_t)
                     
                     light_intersection_dist = norm(light["position"] - ray_thing_intersection)
                     
-                    print("light_intersection_dist",light_intersection_dist)
+                    # print("light_intersection_dist",light_intersection_dist)
                     
                     # # full light refl
                     if ((next_object_t < light_intersection_dist) and bounce_idx==0):
@@ -128,75 +131,45 @@ if __name__=="__main__":
                     # illumination
                     if light["type"] == "sun":
                         light_surf_dot = np.dot(light_intersection, object_surface_normal)
-                        if light_surf_dot >=0:
-                            # times +=1
+                        if light_surf_dot >0:
+                            times +=1
                             lambert_illumination = first_object["diffuse"] * light["diffuse"] * light_surf_dot
                         else:
                             lambert_illumination = 0
                     
                     ray_interaction_objects += [[np.array(first_object["shine"]),lambert_illumination,first_object["diffuse"]]]
                     
-                    print("ray_interaction_objects",ray_interaction_objects)
+                    # print("ray_interaction_objects",ray_interaction_objects)
                     
                     origin = origin_offset
                     
-                    print("mew origin", origin)
+                    # print("mew origin", origin)
                     ray_direction = reflected(ray_direction, object_surface_normal)
                     # ray_direction = ray_direction - 2* (np.dot(ray_direction, object_surface_normal) * object_surface_normal )
                     
-                    print("ray_direction",ray_direction)
+                    # print("ray_direction",ray_direction)
                 
                 # shadows?
                 
-                # empty_array = np.zeros(3)
-                # ray_interaction_objects += [empty_array,empty_array]
+                empty_array = np.zeros(3)
+                ray_interaction_objects += [empty_array,empty_array]
                 
-                # if shadow_occur == False:
-                #     ray_interaction_objects_reversed = ray_interaction_objects[::-1]
+                if shadow_occur == False:
+                    ray_interaction_objects_reversed = ray_interaction_objects[::-1]
                     
-                #     final_color = empty_array
-                #     for shadow_object in ray_interaction_objects_reversed:
-                #         final_color = (np.array([1,1,1]) - np.array(shadow_object[0])) * np.array(shadow_object[1]) + np.array(shadow_object[0]) * final_color
+                    final_color = empty_array
+                    for shadow_object in ray_interaction_objects_reversed:
+                        final_color = (np.array([1,1,1]) - np.array(shadow_object[0])) * np.array(shadow_object[1]) + np.array(shadow_object[0]) * final_color
                         
-                #     if not ((final_color == np.zeros(3)).all() and ray_interaction_occur==False):
-                #         times +=1
-                #         output_color = current_color + np.array(final_color)
-                #         output_color = np.array(np.clip(output_color,0,1))
+                    if not ((final_color == np.zeros(3)).all() and ray_interaction_occur==False):
+                        # times +=1
+                        output_color = current_color + np.array(final_color)
+                        output_color = np.array(np.clip(output_color,0,1))
                         
-                #         output_color = tuple(lin2srgb(output_color)*255)
-                #         print("opcol",output_color)
-                #         image.putpixel((j,i), tuple(np.append(output_color, [255]).astype(int)))
+                        output_color = tuple(lin2srgb(output_color)*255)
+                        # print("opcol",output_color)
+                        image.putpixel((j,i), tuple(np.append(output_color, [255]).astype(int)))
                         
-                if shadow_occur != True:
-                    ray_interaction_objects = ray_interaction_objects[::-1]
-                    fin_col = np.zeros(3)
-
-                    for ii in ray_interaction_objects:
-                        # ii = in_obj[jj]
-                        fin_col = ((np.array([1, 1, 1]) - np.array(ii[0])) * np.array(ii[1])) + (
-                                    np.array(ii[0]) * fin_col)
-
-                    if not ((fin_col == np.zeros(3)).all() and ray_interaction_occur == False):
-                        times +=1
-                        
-                        # col = np.append(fin_col, [1])
-                        col = current_color + np.array(fin_col)
-                        col = np.array(np.clip(col, 0, 1))
-                        # if v != -1:
-                        #     col = expose(col, v)
-                        col = tuple(lin2srgb(col) * 255)
-                        # print("col:",col)
-                        col = np.append(col, [255]).astype(int)
-                        print("opcol",col)
-                        image.putpixel((j, i), tuple(col))
-                
-                    
-                    
-                    
-                    
-                    
-                    
-                
                 
                 
                 

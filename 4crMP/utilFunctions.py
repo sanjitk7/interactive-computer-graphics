@@ -4,7 +4,7 @@ from PIL import Image
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere"]
+    legal_command_start = ["png", "sphere","sun"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -21,6 +21,7 @@ def get_commands_from_input(f_path):
     
 def initScene(commands):
     objects = []
+    light_sources = []
     image = None
     light_bounces = 4
     default_diffuse = np.array([1,1,1])
@@ -34,6 +35,7 @@ def initScene(commands):
         #     "radius":None
         # }
         polygon_object = {}
+        light_source = {}
         
         if command[0] == "png":
             width, height, recent_open_image = int(command[1]), int(command[2]), command[3]
@@ -48,8 +50,14 @@ def initScene(commands):
             
             objects.append(polygon_object)
         
+        if command[0] == "sun":
+            light_source["type"] = "sun"
+            light_source["position"] = np.array([float(command[1]),float(command[2]),float(command[3])])
+            light_source["diffuse"] = default_diffuse
+        
+            light_sources.append(light_source)
     
-    return image, objects, light_bounces
+    return image, objects, light_sources, light_bounces
         
 
 
