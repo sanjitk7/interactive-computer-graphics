@@ -6,7 +6,6 @@ import math
 
 # utilFunctions
 from utilFunctions import get_commands_from_input, initScene, srgb2lin, lin2srgb, nearest_intersected_object
-from utilFunctions2 import load_data
 from vectorUtils import normalize, norm, reflected
 
 
@@ -35,7 +34,7 @@ if __name__=="__main__":
     commands = get_commands_from_input(f_path)
     
     # stage 1
-    image, objects, lights, light_bounces = initScene(commands)
+    image, objects, lights, light_bounces, output_file_name = initScene(commands)
     
     # stage 2
     width, height = image.size
@@ -177,6 +176,6 @@ if __name__=="__main__":
     print("times",times)
     print("\ncommands: ",commands)
     print("objects: ",objects)
-    image.save("./output/op.png")
+    image.save(output_file_name)
     # print("load_data", load_data(f_path))
     

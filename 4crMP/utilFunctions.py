@@ -60,7 +60,7 @@ def initScene(commands):
         if command[0] == "color":
             default_diffuse = np.array([float(command[1]),float(command[2]),float(command[3])])
     
-    return image, objects, light_sources, light_bounces
+    return image, objects, light_sources, light_bounces, recent_open_image
         
 
 
