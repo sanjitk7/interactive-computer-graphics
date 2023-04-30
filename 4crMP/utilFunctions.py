@@ -1,5 +1,7 @@
 import numpy as np
+import math
 from PIL import Image
+from vectorUtils import norm, magnitude, normalize
 
 def get_commands_from_input(f_path):
     
@@ -18,7 +20,8 @@ def get_commands_from_input(f_path):
                 print("Ignored Illegal: ",line)
         # print(commands)
         return commands
-    
+
+# STAGE 1: RUN THROUGH ALL OBJECTS AND INITIALIZE THEM
 def initScene(commands):
     objects = []
     light_sources = []
@@ -29,12 +32,13 @@ def initScene(commands):
     
     for command in commands:
         
-        # polygon_object = {
-        #     "type":None,
-        #     "center":None,
-        #     "radius":None
-        # }
-        polygon_object = {}
+        polygon_object = {
+            "type":None,
+            "center":None,
+            "radius":None
+        }
+        
+        # polygon_object = {}
         light_source = {}
         
         if command[0] == "png":
@@ -89,23 +93,12 @@ def srgb2lin(s):
     return fin
 
 
-
-def sphere_intersect(center, radius, ray_origin, ray_direction):
-    b = 2 * np.dot(ray_direction, ray_origin - center)
-    c = np.linalg.norm(ray_origin - center) ** 2 - radius ** 2
-    delta = b ** 2 - 4 * c
-    if delta > 0:
-        t1 = (-b + np.sqrt(delta)) / 2
-        t2 = (-b - np.sqrt(delta)) / 2
-        if t1 > 0 and t2 > 0:
-            return min(t1, t2)
-    return None
-
 def nearest_intersected_object(objects, ray_origin, ray_direction):
     distances = []
     for obj in objects:
         if obj['type'] == 'sphere':
-            distances.append(sphere_intersect(obj['center'], obj['radius'], ray_origin, ray_direction))
+            # distances.append(ray_sphere_intersection(obj['center'], obj['radius'], ray_origin, ray_direction))
+            distances.append(ray_sphere_intersection(ray_origin, ray_direction, obj["center"], obj["radius"]))
         # elif obj["obj"] == 'plane':
         #     point, normal = plane_eq(obj)
         #     distances.append(plane_intersect(point, normal, ray_origin, ray_direction))
@@ -119,3 +112,46 @@ def nearest_intersected_object(objects, ray_origin, ray_direction):
             min_distance = distance
             nearest_object = objects[index]
     return nearest_object, min_distance
+
+
+# from ray-sphere intersection
+def ray_sphere_intersection(ro, rd, sphere_center, sphere_radius):
+    # print("rsph in: ",ro, rd, sphere_center, sphere_radius)
+    inside = math.pow(magnitude(sphere_center - ro),2) - math.pow(sphere_radius, 2)
+    tc = np.dot(sphere_center - ro, rd) / norm(rd)
+    
+    if inside > 0 and tc < 0:
+        return None
+
+    d_square = math.pow(magnitude(ro + tc*rd - sphere_center),2)
+    
+    if (d_square <0):
+        print("d_sq negative?", d_square)
+    
+    if (inside > 0) and (math.pow(sphere_radius,2) < d_square):
+        return None
+    
+    try:
+        t_offset = math.sqrt(sphere_radius**2 - d_square)/ norm(rd)
+    except:
+        print("exception:",inside,sphere_radius,d_square)
+    
+    # sphere has 2 intersection points
+    t1 = tc + t_offset
+    t2 = tc - t_offset
+    if t1 > 0 and t2> 0:
+        return min(t1, t2)
+
+
+# find the first object that a ray intersects in the scene -> t, object
+def ray_thing_intersection(objects, ro, rv):
+    all_thing_intersections = []
+    closest_hit = None
+    rd = normalize(rv)
+    
+    # find object intersections
+    for object in objects:
+        if object["type"] == "sphere":
+            all_thing_intersections += [ray_sphere_intersection(ro, rd, object["center"], object["radius"])]
+    
+    

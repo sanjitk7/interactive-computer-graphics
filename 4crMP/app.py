@@ -1,3 +1,5 @@
+# https://cs418.cs.illinois.edu/website/hw-raytracer.html
+
 from sys import argv
 from PIL import Image
 from pprint import pprint
@@ -33,13 +35,13 @@ if __name__=="__main__":
         
     commands = get_commands_from_input(f_path)
     
-    # stage 1
+    # stage 1 - run through objects and initialize
     image, objects, lights, light_bounces, output_file_name = initScene(commands)
     
-    # stage 2
+    # stage 2 - shoot, bounce and intersect rays for each pixel (from camera)
     width, height = image.size
     
-    # default sun
+    # default light source if light source isnt specified
     default_lights = [{
         "type": "sun",
         "position": np.array([1,0,0]),
@@ -49,7 +51,7 @@ if __name__=="__main__":
     if len(lights) == 0:
         lights = default_lights
 
-    # default up, forward
+    # default vectors
     eye = np.array([0,0,0])
     up = np.array([0,1,0])
     forward = np.array([0,0,-1])
@@ -63,13 +65,15 @@ if __name__=="__main__":
                 # print("RAY EMISSION FOR PIXEL :",j,i)
                 
                 origin = eye
+                
                 sx = (2*j - width)/max(width,height)
                 sy = (height - 2*i)/max(width,height)
                 
                 # print("sx,sy",(sx,sy))
                 
+                # generate rays
                 ray_direction = normalize(forward+ sx*right + sy*up)
-                reflection = np.array([1,1,1]) # temp
+                # reflection = np.array([1,1,1]) # temp
                 
                 # color = np.array(image.getpixel((j, i))).astype(float)[:-1] / 255
                 # print("jiji",j,i)
@@ -148,10 +152,11 @@ if __name__=="__main__":
                     
                     # print("ray_direction",ray_direction)
                 
-                # shadows?
+                # if no shadow on this pixel iteration -> render the correct illuminated color -> if not shadow black
                 
                 empty_array = np.zeros(3)
                 ray_interaction_objects += [empty_array,empty_array]
+                
                 
                 if shadow_occur == False:
                     ray_interaction_objects_reversed = ray_interaction_objects[::-1]
