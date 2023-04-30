@@ -1,3 +1,5 @@
+# taken from stackoverflow to test answers - https://stackoverflow.com/questions/16720594/comparing-two-images-pixel-wise-with-pil-python-imaging-library
+
 from PIL import Image, ImageChops
 import sys
 point_table = ([0] + ([255] * 255))

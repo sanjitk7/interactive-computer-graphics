@@ -93,26 +93,19 @@ def srgb2lin(s):
     return fin
 
 
-def nearest_intersected_object(objects, ray_origin, ray_direction):
-    distances = []
-    for obj in objects:
-        if obj['type'] == 'sphere':
-            # distances.append(ray_sphere_intersection(obj['center'], obj['radius'], ray_origin, ray_direction))
-            distances.append(ray_sphere_intersection(ray_origin, ray_direction, obj["center"], obj["radius"]))
-        # elif obj["obj"] == 'plane':
-        #     point, normal = plane_eq(obj)
-        #     distances.append(plane_intersect(point, normal, ray_origin, ray_direction))
-        # elif obj['obj'] == 'triangle':
-        #     distances.append(triangle_intersect(obj['vertex'], ray_origin, ray_direction))
+# get normal of object based on polygon type to calculate illumination
+def get_object_normal(object, ray_hit):
+    object_type = object["type"] 
+    if object_type == "sphere":
+        return normalize(ray_hit - object["center"])
 
-    nearest_object = None
-    min_distance = np.inf
-    for index, distance in enumerate(distances):
-        if distance and distance < min_distance:
-            min_distance = distance
-            nearest_object = objects[index]
-    return nearest_object, min_distance
-
+# get light direction and distance from origin
+def get_light_dir_dist(light, ray_hit):
+    light_type = light["type"]
+    if light_type == "sun":
+        light_dir = normalize(light["position"])
+        light_dist = norm(light["position"] - ray_hit)
+        return light_dir, light_dist
 
 # from ray-sphere intersection
 def ray_sphere_intersection(ro, rd, sphere_center, sphere_radius):
@@ -146,7 +139,8 @@ def ray_sphere_intersection(ro, rd, sphere_center, sphere_radius):
 # find the first object that a ray intersects in the scene -> t, object
 def ray_thing_intersection(objects, ro, rv):
     all_thing_intersections = []
-    closest_hit = None
+    closest_hit_object = None
+    t_min = np.inf
     rd = normalize(rv)
     
     # find object intersections
@@ -154,4 +148,17 @@ def ray_thing_intersection(objects, ro, rv):
         if object["type"] == "sphere":
             all_thing_intersections += [ray_sphere_intersection(ro, rd, object["center"], object["radius"])]
     
+    # get the object from the distance
+    for thing_idx, t_thing in enumerate(all_thing_intersections):
+        if t_thing != None and t_thing < t_min:
+            closest_hit_object = objects[thing_idx]
+            t_min = t_thing
     
+    return closest_hit_object, t_min
+    
+            
+def lamberts_law_illumination(object, light_diffuse, light_direction, surface_normal):
+    light_surf_dot = np.dot(light_direction, surface_normal)
+    if light_surf_dot > 0:
+        return object["diffuse"] * light_diffuse * light_surf_dot
+    return 0

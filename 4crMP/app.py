@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 # utilFunctions
-from utilFunctions import get_commands_from_input, initScene, srgb2lin, lin2srgb, nearest_intersected_object
+from utilFunctions import get_commands_from_input, initScene, srgb2lin, lin2srgb, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination
 from vectorUtils import normalize, norm, reflected
 
 
@@ -35,7 +35,7 @@ if __name__=="__main__":
         
     commands = get_commands_from_input(f_path)
     
-    # stage 1 - run through objects and initialize
+    # stage 1 - run through objects and initialize data structure to store them
     image, objects, lights, light_bounces, output_file_name = initScene(commands)
     
     # stage 2 - shoot, bounce and intersect rays for each pixel (from camera)
@@ -86,71 +86,43 @@ if __name__=="__main__":
                 ray_interaction_objects = []
                 lambert_illumination = np.array([0,0,0])
                 
+                
+                # do ray collision for a default of 4 times
                 for bounce_idx in range(light_bounces):
-                    first_object, t = nearest_intersected_object(objects, origin, ray_direction)
                     
-                    # print("first_obj",first_object, t)
+                    first_object, t = ray_thing_intersection(objects, origin, ray_direction)
                     
-                    # skip further bounce iteration if light doesnt hit anything in the first place
+                    # skip further bounce iteration if light doesn't hit anything in the first place
                     if (first_object==None and bounce_idx==0):
                         ray_interaction_occur = False
                     
                     if (first_object==None):
                         break
                     
-                    ray_thing_intersection = origin + t * ray_direction
+                    # new ray create
+                    ray_hit = origin + t * ray_direction
+                    object_surface_normal = get_object_normal(first_object, ray_hit)
                     
-                    # print("ray_thing_intersection:", ray_thing_intersection)
+                    # offset the new ray by a very small point to avoid self shadowing and move the reset the ray emission point for next iteration
+                    origin_offset = ray_hit + (1e-5*object_surface_normal)
+                    origin = origin_offset
                     
-                    if first_object["type"] == "sphere":
-                        object_surface_normal = normalize(ray_thing_intersection - first_object["center"])
-                        # print("surf norm ",object_surface_normal)
+                    light_intersection, light_intersection_dist = get_light_dir_dist(light,ray_hit)
                     
+                    # find the next interaction on ray bounce
+                    next_object, next_object_t = ray_thing_intersection(objects, origin_offset, light_intersection)
                     
-                    origin_offset = ray_thing_intersection + (1e-5*object_surface_normal)
-                    # print("origin_offset", origin_offset)
-                    
-                    if light["type"] == "sun":
-                        light_intersection = normalize(light["position"])
-                        # print("LI", light_intersection)
-                    
-                    next_object, next_object_t = nearest_intersected_object(objects, origin_offset, light_intersection)
-                    
-                    # print("next_object_t:",next_object_t)
-                    
-                    light_intersection_dist = norm(light["position"] - ray_thing_intersection)
-                    
-                    # print("light_intersection_dist",light_intersection_dist)
-                    
-                    # # full light refl
+                    # if bounced ray hits object first before cam - shadow => no further bounces
                     if ((next_object_t < light_intersection_dist) and bounce_idx==0):
-                        # times +=1
                         shadow_occur = True
-                        # prev_color = image.getpixel((j, i))[:-1]
                         image.putpixel((j,i), tuple(np.append(np.array(image.getpixel((j, i)))[:-1], [255])))
                         break
                 
-                    
                     # illumination
-                    if light["type"] == "sun":
-                        light_surf_dot = np.dot(light_intersection, object_surface_normal)
-                        if light_surf_dot >0:
-                            times +=1
-                            lambert_illumination = first_object["diffuse"] * light["diffuse"] * light_surf_dot
-                        else:
-                            lambert_illumination = 0
-                    
+                    lambert_illumination = lamberts_law_illumination(first_object, light["diffuse"], light_intersection, object_surface_normal)
+                   
                     ray_interaction_objects += [[np.array(first_object["shine"]),lambert_illumination,first_object["diffuse"]]]
                     
-                    # print("ray_interaction_objects",ray_interaction_objects)
-                    
-                    origin = origin_offset
-                    
-                    # print("mew origin", origin)
-                    ray_direction = reflected(ray_direction, object_surface_normal)
-                    # ray_direction = ray_direction - 2* (np.dot(ray_direction, object_surface_normal) * object_surface_normal )
-                    
-                    # print("ray_direction",ray_direction)
                 
                 # if no shadow on this pixel iteration -> render the correct illuminated color -> if not shadow black
                 
