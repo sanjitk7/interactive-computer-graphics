@@ -7,18 +7,13 @@ import numpy as np
 import math
 
 # utilFunctions
-from utilFunctions import get_commands_from_input, initScene, srgb2lin, lin2srgb, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination
-from vectorUtils import normalize, norm, reflected
+from utilFunctions import get_commands_from_input, initScene,sRGB_to_linear,linear_to_sRGB, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination
+from vectorUtils import normalize, norm
 
 
 # global vars
-# current_color = [0,0,0]
 times = 0
-
-implemented = "implemented.txt"
-
-# f_path = "mpray_sphere.txt"
-
+empty_array = np.zeros(3)
 
 if __name__=="__main__":
     print("\nMAIN")
@@ -69,18 +64,15 @@ if __name__=="__main__":
                 sx = (2*j - width)/max(width,height)
                 sy = (height - 2*i)/max(width,height)
                 
-                # print("sx,sy",(sx,sy))
-                
                 # generate rays
                 ray_direction = normalize(forward+ sx*right + sy*up)
-                # reflection = np.array([1,1,1]) # temp
                 
-                # color = np.array(image.getpixel((j, i))).astype(float)[:-1] / 255
                 # print("jiji",j,i)
                 current_color = (np.array(image.getpixel((j,i)))[:-1])/255
-                current_color = srgb2lin(current_color)
+                current_color = sRGB_to_linear(current_color)
                 
                 # ray collision
+                shadow = False
                 ray_interaction_occur = True
                 ray_interaction_objects = []
                 lambert_illumination = np.array([0,0,0])
@@ -113,41 +105,40 @@ if __name__=="__main__":
                     
                     # if bounced ray hits object first before cam - shadow (set pixel 0) => no further bounces
                     if ((next_object_t < light_intersection_dist) and bounce_idx==0):
+                        shadow = True
                         image.putpixel((j,i), tuple(np.append(np.array(image.getpixel((j, i)))[:-1], [255])))
                         break
                 
                     # illumination
                     lambert_illumination = lamberts_law_illumination(first_object, light["diffuse"], light_intersection, object_surface_normal)
                    
-                    ray_interaction_objects += [[np.array(first_object["shine"]),lambert_illumination,first_object["diffuse"]]]
+                    
+                    ray_interaction_objects += [{
+                        "shine": first_object["shine"],
+                        "illum": lambert_illumination
+                    }]
                 
                 # if no shadow on this pixel iteration -> render the correct illuminated color -> if not shadow black
-                empty_array = np.zeros(3)
-                ray_interaction_objects += [empty_array,empty_array]
+                
+                ray_interaction_objects += [{"shine":empty_array,"illum":empty_array}]
                 
                 # setting the image colors based on ray_object_interactions
-                ray_interaction_objects_reversed = ray_interaction_objects[::-1]
-                
-                final_color = empty_array
-                for shadow_object in ray_interaction_objects_reversed:
-                    final_color = (np.array([1,1,1]) - np.array(shadow_object[0])) * np.array(shadow_object[1]) + np.array(shadow_object[0]) * final_color
+                if shadow == False:
+                    ray_interaction_objects_reversed = ray_interaction_objects[::-1]
                     
-                if not ((final_color == np.zeros(3)).all() and ray_interaction_occur==False):
-                    # times +=1
-                    output_color = current_color + np.array(final_color)
-                    output_color = np.array(np.clip(output_color,0,1))
-                    
-                    output_color = tuple(lin2srgb(output_color)*255)
-                    # print("opcol",output_color)
-                    image.putpixel((j,i), tuple(np.append(output_color, [255]).astype(int)))
+                    final_color = empty_array
+                    for shadow_object in ray_interaction_objects_reversed:
+                        # final_color = (np.array([1,1,1]) - np.array(shadow_object["shine"])) * np.array(shadow_object["illum"]) + np.array(shadow_object["shine"]) * final_color
+                        final_color = np.array(shadow_object["illum"])
                         
-                
-                
-                
-                
+                    if not ((final_color == np.zeros(3)).all() and not ray_interaction_occur):
+                        output_color = current_color + np.array(final_color)
+                        output_color = tuple(linear_to_sRGB(output_color)*255)
+                        image.putpixel((j,i), tuple(np.append(output_color, [255]).astype(int)))
+
+                        
     print("times",times)
     print("\ncommands: ",commands)
     print("objects: ",objects)
     image.save(output_file_name)
-    # print("load_data", load_data(f_path))
     

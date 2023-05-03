@@ -68,29 +68,30 @@ def initScene(commands):
         
 
 
-# required
-def lin2srgb(lis):
-    fin = []
-    for lin in lis:
-        if lin > 0.0031308:
-            s = 1.055 * (pow(lin, (1.0 / 2.4))) - 0.055
-        else:
-            s = 12.92 * lin
-        fin.append(s)
-    return np.array(fin)
 
-# required
-def srgb2lin(s):
-    fin = []
-    for c in s:
-        if c <= 0.0404482362771082:
-            lin = c / 12.92
+# Gamma Correction:  LDisplay converted to LStorage
+def linear_to_sRGB(linear_colors):
+    linear_colors = list(linear_colors)
+    sRGB = []
+    for color in linear_colors:
+        if color <= 0.0031308:
+            sRGB.append(color*12.92)
         else:
-            lin = pow(((c + 0.055) / 1.055), 2.4)
-        fin.append(lin)
-    fin = np.array(fin)
+            sRGB.append((color**(1/2.4)*1.055) - 0.055)
+    return np.array(sRGB)
 
-    return fin
+# Gamma Correction: LStorage converted to LDisplay
+def sRGB_to_linear(rGBcolors):
+    rGBcolors = list(rGBcolors)
+    linear_colors = []
+    for color in rGBcolors:
+        # color_scaled = color/255
+        if color <= 0.04045:
+            linear_colors.append(color/12.92)
+        else:
+            linear_colors.append(((color + 0.055)/1.055)**2.4)
+    # print("sRGB to linear color: ",linear_colors)
+    return np.array(linear_colors)
 
 
 # get normal of object based on polygon type to calculate illumination
