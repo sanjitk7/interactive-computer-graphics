@@ -82,6 +82,7 @@ if __name__=="__main__":
                 for bounce_idx in range(light_bounces):
                     
                     first_object, t = ray_thing_intersection(objects, origin, ray_direction)
+                    # print("at pixel: ",i,j, " bidx ",bounce_idx," first hit obj:",first_object)
                     
                     # skip further bounce iteration if light doesn't hit anything in the first place
                     if (first_object==None and bounce_idx==0):
@@ -135,7 +136,18 @@ if __name__=="__main__":
                         output_color = current_color + np.array(final_color)
                         output_color = tuple(linear_to_sRGB(output_color)*255)
                         image.putpixel((j,i), tuple(np.append(output_color, [255]).astype(int)))
-
+                    else:
+                        pass
+                        # if not ray_interaction_occur:
+                        #     print("no ray inter: ",i,j)
+                        # if (final_color == np.zeros(3)).all():
+                        #     print("dark final col: ",i,j)
+                        #     image.putpixel((j,i), tuple(np.append([100,100,100], [255]).astype(int)))
+                        # image.putpixel((j,i), tuple(np.append([100,100,100], [255]).astype(int)))
+                else:
+                    pass
+                    # print("shadow skip: ",i,j)
+                    # image.putpixel((j,i), tuple(np.append([100,100,100], [255]).astype(int)))
                         
     print("times",times)
     print("\ncommands: ",commands)

@@ -6,7 +6,7 @@ from vectorUtils import norm, magnitude, normalize
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere","sun","color","bulb"]
+    legal_command_start = ["png", "sphere","sun","color","bulb", "plane"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -71,6 +71,16 @@ def initScene(commands):
             light_source["diffuse"] = default_diffuse
             
             light_sources.append(light_source)
+        
+        if command[0] == "plane":
+            polygon_object["type"] = command[0]
+            polygon_object["AxByCzD"] = np.array([float(command[1]),float(command[2]),float(command[3]), float(command[4])])
+            
+            # current color and shine for light color and shine
+            polygon_object["diffuse"] = default_diffuse
+            polygon_object["shine"] = default_shine
+            
+            objects.append(polygon_object)
             
     
     return image, objects, light_sources, light_bounces, recent_open_image
@@ -108,6 +118,9 @@ def get_object_normal(object, ray_hit):
     object_type = object["type"] 
     if object_type == "sphere":
         return normalize(ray_hit - object["center"])
+    if object_type == "plane":
+        # find plane normal
+        pass
 
 # get light direction and distance from origin
 def get_light_dir_dist(light, ray_hit, new_light_origin):
@@ -146,9 +159,18 @@ def ray_sphere_intersection(ro, rd, sphere_center, sphere_radius):
     # sphere has 2 intersection points
     t1 = tc + t_offset
     t2 = tc - t_offset
-    if t1 > 0 and t2> 0:
-        return min(t1, t2)
+    
+    if t1 > 0 or t2> 0:
+        if inside < 0 and t1>0:
+            return t1
+        elif inside >0 and t2>0:
+            return t2
+        # return min(t1, t2)
+        
+    # if t1 > 0 and t2> 0:
+    #     return min(t1, t2)
 
+# from ray-plane intersection
 
 # find the first object that a ray intersects in the scene -> t, object
 def ray_thing_intersection(objects, ro, rv):
@@ -161,7 +183,10 @@ def ray_thing_intersection(objects, ro, rv):
     for object in objects:
         if object["type"] == "sphere":
             all_thing_intersections += [ray_sphere_intersection(ro, rd, object["center"], object["radius"])]
-    
+        if object["type"] == "plane":
+            # find ray_plane_intersection
+            pass
+        
     # get the object from the distance
     for thing_idx, t_thing in enumerate(all_thing_intersections):
         if t_thing != None and t_thing < t_min:
@@ -172,12 +197,13 @@ def ray_thing_intersection(objects, ro, rv):
     
             
 def lamberts_law_illumination(object, light_diffuse, light_type, light_direction,light_intersection_dist, surface_normal):
-    light_surf_dot = np.dot(light_direction, surface_normal)
+    light_surf_dot = np.dot(surface_normal,light_direction)
     
     # computer fall off for artificial bulb lighting
     fall_off = 1
     if light_type == "bulb":
-        fall_off = math.pow(1/light_intersection_dist, 2)
+        # fall_off = math.pow(1/light_intersection_dist, 2)
+        fall_off = 1/math.pow(light_intersection_dist, 2)
     
     if light_surf_dot > 0:
         return object["diffuse"] * light_diffuse * light_surf_dot * fall_off
