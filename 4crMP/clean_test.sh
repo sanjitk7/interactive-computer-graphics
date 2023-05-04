@@ -8,6 +8,8 @@ rm mpray_overlap.png
 rm mpray_shadow-basic.png
 
 rm mpray_suns.png
+rm mpray_bulb.png
+rm mpray_neglight.png
 
 rm diffResult/*.png
 echo "\n**********Finish calculating pixel-wise diff**********n"
