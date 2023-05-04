@@ -98,7 +98,7 @@ if __name__=="__main__":
                     origin_offset = ray_hit + (1e-5*object_surface_normal)
                     origin = origin_offset
                     
-                    light_intersection, light_intersection_dist = get_light_dir_dist(light,ray_hit)
+                    light_intersection, light_intersection_dist = get_light_dir_dist(light,ray_hit,origin_offset)
                     
                     # find the next interaction on ray bounce
                     next_object, next_object_t = ray_thing_intersection(objects, origin_offset, light_intersection)
@@ -110,7 +110,7 @@ if __name__=="__main__":
                         break
                 
                     # illumination
-                    lambert_illumination = lamberts_law_illumination(first_object, light["diffuse"], light_intersection, object_surface_normal)
+                    lambert_illumination = lamberts_law_illumination(first_object, light["diffuse"], light["type"], light_intersection, light_intersection_dist, object_surface_normal)
                    
                     
                     ray_interaction_objects += [{

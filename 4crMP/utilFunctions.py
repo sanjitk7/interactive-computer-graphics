@@ -6,7 +6,7 @@ from vectorUtils import norm, magnitude, normalize
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere","sun","color"]
+    legal_command_start = ["png", "sphere","sun","color","bulb"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -70,6 +70,8 @@ def initScene(commands):
             light_source["position"] = np.array([float(command[1]),float(command[2]),float(command[3])])
             light_source["diffuse"] = default_diffuse
             
+            light_sources.append(light_source)
+            
     
     return image, objects, light_sources, light_bounces, recent_open_image
         
@@ -108,10 +110,14 @@ def get_object_normal(object, ray_hit):
         return normalize(ray_hit - object["center"])
 
 # get light direction and distance from origin
-def get_light_dir_dist(light, ray_hit):
+def get_light_dir_dist(light, ray_hit, new_light_origin):
     light_type = light["type"]
     if light_type == "sun":
         light_dir = normalize(light["position"])
+        light_dist = norm(light["position"] - ray_hit)
+        return light_dir, light_dist
+    if light_type == "bulb":
+        light_dir = normalize(light["position"] - new_light_origin)
         light_dist = norm(light["position"] - ray_hit)
         return light_dir, light_dist
 
@@ -165,8 +171,14 @@ def ray_thing_intersection(objects, ro, rv):
     return closest_hit_object, t_min
     
             
-def lamberts_law_illumination(object, light_diffuse, light_direction, surface_normal):
+def lamberts_law_illumination(object, light_diffuse, light_type, light_direction,light_intersection_dist, surface_normal):
     light_surf_dot = np.dot(light_direction, surface_normal)
+    
+    # computer fall off for artificial bulb lighting
+    fall_off = 1
+    if light_type == "bulb":
+        fall_off = math.pow(1/light_intersection_dist, 2)
+    
     if light_surf_dot > 0:
-        return object["diffuse"] * light_diffuse * light_surf_dot
+        return object["diffuse"] * light_diffuse * light_surf_dot * fall_off
     return 0

@@ -4,3 +4,6 @@ mpray_behind.txt
 mpray_color.txt
 mpray_overlap.txt
 mpray_shadow-basic.txt
+
+mpray_suns.txt
+mpray_bulb.txt
