@@ -94,7 +94,7 @@ if __name__=="__main__":
                     ray_hit = origin + t * ray_direction
                     object_surface_normal = get_object_normal(first_object, ray_hit)
                     
-                    # offset the new ray by a very small point to avoid self shadowing and move the reset the ray emission point for next iteration
+                    # add bias - offset the new ray by a very small point to avoid self shadowing and move the reset the ray emission point for next iteration
                     origin_offset = ray_hit + (1e-5*object_surface_normal)
                     origin = origin_offset
                     

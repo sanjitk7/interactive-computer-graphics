@@ -7,4 +7,6 @@ python compareImages.py mpray_color.png data/img/mpray_color.png diffResult/mpra
 python compareImages.py mpray_overlap.png data/img/mpray_overlap.png diffResult/mpray_overlap
 python compareImages.py mpray_shadow-basic.png data/img/mpray_shadow-basic.png diffResult/mpray_shadow-basic
 
+python compareImages.py mpray_suns.png data/img/mpray_suns.png diffResult/mpray_suns
+
 echo "\n**********Finish calculating pixel-wise diff**********n"

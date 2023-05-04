@@ -38,9 +38,6 @@ def initScene(commands):
             "radius":None
         }
         
-        # polygon_object = {}
-        light_source = {}
-        
         if command[0] == "png":
             width, height, recent_open_image = int(command[1]), int(command[2]), command[3]
             image = Image.new("RGBA", (width, height), (0,0,0,0))
@@ -49,12 +46,15 @@ def initScene(commands):
             polygon_object["type"] = command[0]
             polygon_object["center"] = np.array([float(command[1]),float(command[2]),float(command[3])])
             polygon_object["radius"] = float(command[4])
+            
+            # current color and shine for light color and shine
             polygon_object["diffuse"] = default_diffuse
             polygon_object["shine"] = default_shine
             
             objects.append(polygon_object)
         
         if command[0] == "sun":
+            light_source = {}
             light_source["type"] = "sun"
             light_source["position"] = np.array([float(command[1]),float(command[2]),float(command[3])])
             light_source["diffuse"] = default_diffuse
@@ -63,6 +63,13 @@ def initScene(commands):
             
         if command[0] == "color":
             default_diffuse = np.array([float(command[1]),float(command[2]),float(command[3])])
+        
+        if command[0] == "bulb":
+            light_source = {}
+            light_source["type"] = "bulb"
+            light_source["position"] = np.array([float(command[1]),float(command[2]),float(command[3])])
+            light_source["diffuse"] = default_diffuse
+            
     
     return image, objects, light_sources, light_bounces, recent_open_image
         
