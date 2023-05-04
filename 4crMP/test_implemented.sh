@@ -23,6 +23,8 @@ echo "\n-----------Running mpray_suns-----------\n"
 make run file="data/txt/mpray_suns.txt"
 echo "\n-----------Running mpray_bulb-----------\n"
 make run file="data/txt/mpray_bulb.txt"
+echo "\n-----------Running mpray_neglight-----------\n"
+make run file="data/txt/mpray_neglight.txt"
 
 
 echo "\n-----------scipt finished!-----------"
