@@ -13,6 +13,8 @@ rm mpray_neglight.png
 rm mpray_shadow-bulb.png
 rm mpray_shadow-suns.png
 rm mpray_inside.png
+rm mpray_plane.png
+rm mpray_shadow-plane.png
 
 rm diffResult/*.png
 echo "\n**********Finish calculating pixel-wise diff**********n"

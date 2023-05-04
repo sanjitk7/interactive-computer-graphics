@@ -96,7 +96,7 @@ if __name__=="__main__":
                     object_surface_normal = get_object_normal(first_object, ray_hit)
                     
                     # add bias - offset the new ray by a very small point to avoid self shadowing and move the reset the ray emission point for next iteration
-                    origin_offset = ray_hit + (1e-5*object_surface_normal)
+                    origin_offset = ray_hit + (1e-7*object_surface_normal)
                     origin = origin_offset
                     
                     light_intersection, light_intersection_dist = get_light_dir_dist(light,ray_hit,origin_offset)

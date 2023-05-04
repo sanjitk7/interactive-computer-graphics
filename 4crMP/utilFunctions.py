@@ -113,14 +113,24 @@ def sRGB_to_linear(rGBcolors):
     return np.array(linear_colors)
 
 
+# coordinate algebra for normals and planes - https://math.stackexchange.com/questions/2333074/when-does-a-normal-line-intersect-the-plane
+def get_plane_normal(plane):
+    A, B, C, D = plane["AxByCzD"]
+    root_A_sq_B_sq_C_sq = math.sqrt(A**2 + B**2 + C**2)
+    normal = np.array([A/root_A_sq_B_sq_C_sq, B/root_A_sq_B_sq_C_sq, C/root_A_sq_B_sq_C_sq])
+    plane_normal_intersection = np.array([A*-D/root_A_sq_B_sq_C_sq, B*-D/root_A_sq_B_sq_C_sq, C*-D/root_A_sq_B_sq_C_sq])
+    
+    return normal, plane_normal_intersection
+    
+
 # get normal of object based on polygon type to calculate illumination
 def get_object_normal(object, ray_hit):
     object_type = object["type"] 
     if object_type == "sphere":
         return normalize(ray_hit - object["center"])
     if object_type == "plane":
-        # find plane normal
-        pass
+        plane_normal, _ = get_plane_normal(object)
+        return plane_normal
 
 # get light direction and distance from origin
 def get_light_dir_dist(light, ray_hit, new_light_origin):
@@ -171,6 +181,15 @@ def ray_sphere_intersection(ro, rd, sphere_center, sphere_radius):
     #     return min(t1, t2)
 
 # from ray-plane intersection
+def ray_plane_intersection(ro, rd, plane_normal, plane_normal_point):
+    if np.dot(rd, plane_normal) == 0:
+        return None
+    t = np.dot((plane_normal_point - ro), plane_normal)/np.dot(rd, plane_normal)
+    if t>0:
+        return t
+    return None
+    
+    
 
 # find the first object that a ray intersects in the scene -> t, object
 def ray_thing_intersection(objects, ro, rv):
@@ -185,7 +204,8 @@ def ray_thing_intersection(objects, ro, rv):
             all_thing_intersections += [ray_sphere_intersection(ro, rd, object["center"], object["radius"])]
         if object["type"] == "plane":
             # find ray_plane_intersection
-            pass
+            plane_normal, plane_normal_point = get_plane_normal(object)
+            all_thing_intersections += [ray_plane_intersection(ro, rd,plane_normal, plane_normal_point)]
         
     # get the object from the distance
     for thing_idx, t_thing in enumerate(all_thing_intersections):

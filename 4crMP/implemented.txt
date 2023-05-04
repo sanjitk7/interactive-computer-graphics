@@ -8,5 +8,7 @@ mpray_shadow-basic.txt
 mpray_suns.txt
 mpray_bulb.txt
 mpray_neglight.txt
+mpray_plane.txt
 mpray_shadow-bulb.txt
 mpray_shadow-suns.txt
+mpray_shadow-plane.txt
