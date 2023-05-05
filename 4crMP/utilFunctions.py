@@ -6,7 +6,7 @@ from vectorUtils import norm, magnitude, normalize
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere","sun","color","bulb", "plane"]
+    legal_command_start = ["png", "sphere","sun","color","bulb", "plane","xyz","trif"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -25,6 +25,7 @@ def get_commands_from_input(f_path):
 def initScene(commands):
     objects = []
     light_sources = []
+    vertices = []
     image = None
     light_bounces = 4
     default_diffuse = np.array([1,1,1])
@@ -81,6 +82,33 @@ def initScene(commands):
             polygon_object["shine"] = default_shine
             
             objects.append(polygon_object)
+        
+        if command[0] == "xyz":
+            print("vertex added with xyz")
+            vertex = np.array([float(command[1]),float(command[2]),float(command[3])])
+            vertices.append(vertex)
+        
+        if command[0] == "trif":
+            polygon_object["type"] = "triangle"
+            v1, v2 ,v3 = [int(x) for x in command[1:]]
+            print("triangle: ",v1,v2,v3)
+            
+            # if positive (do -1) - offset for 0 index in python lists
+            if v1 > 0:
+                v1 -=1
+            if v2 > 0:
+                v2 -=1
+            if v3 > 0:
+                v3-=1
+            
+            print("v1v2v3:",v1,v2,v3)
+            print("vertices:",vertices)
+            polygon_object["vertices"] = [vertices[v1],vertices[v2],vertices[v3]]
+            polygon_object["diffuse"] = default_diffuse
+            polygon_object["shine"] = default_shine
+            
+            objects.append(polygon_object)
+            
             
     
     return image, objects, light_sources, light_bounces, recent_open_image
@@ -122,6 +150,18 @@ def get_plane_normal(plane):
     
     return normal, plane_normal_intersection
     
+# https://stackoverflow.com/questions/19350792/calculate-normal-of-a-single-triangle-in-3d-space
+def get_triangle_normal(triangle):
+    v1,v2,v3 = triangle["vertices"]
+    e1 = v2 - v1
+    e2 = v3 - v1
+    normal = normalize(np.cross(e1,e2))
+    
+    # get normal facing the camera
+    if normal[2] >=0:
+        return normal
+    else:
+        return -normal
 
 # get normal of object based on polygon type to calculate illumination
 def get_object_normal(object, ray_hit):
@@ -131,6 +171,8 @@ def get_object_normal(object, ray_hit):
     if object_type == "plane":
         plane_normal, _ = get_plane_normal(object)
         return plane_normal
+    if object_type == "triangle":
+        return get_triangle_normal(object)
 
 # get light direction and distance from origin
 def get_light_dir_dist(light, ray_hit, new_light_origin):
@@ -189,7 +231,40 @@ def ray_plane_intersection(ro, rd, plane_normal, plane_normal_point):
         return t
     return None
     
+
+def ray_triangle_intersection(ro, rd, tri_vertices, tri_normal):
     
+    # ray-plane intersection
+    d_n = np.dot(rd, tri_normal)
+    v1,v2,v3 = tri_vertices
+    
+    if d_n ==0:
+        return None
+    
+    t = np.dot(v1 - ro, tri_normal)/d_n
+    
+    if t<0:
+        return None
+    
+    # inside or not with barycentric coords
+    e1 = v2 - v1
+    e2 = v3 - v1
+    
+    perp_to_edge_2 = np.cross(rd, e2)
+    distance_from_vertex = np.dot(e1, perp_to_edge_2)
+    
+    bary_2 = np.dot(ro-v1,perp_to_edge_2) * 1/distance_from_vertex
+    
+    perp_to_edge_1 = np.cross(ro-v1,e1)
+    bary_1 = np.dot(rd, perp_to_edge_1) * 1/distance_from_vertex
+    
+    t_inside = np.dot(e2, perp_to_edge_1) * 1/distance_from_vertex
+    
+    if (bary_2<0 or bary_2>1) or (bary_1 <0 or bary_1+bary_2>1):
+        return None
+
+    return t_inside
+
 
 # find the first object that a ray intersects in the scene -> t, object
 def ray_thing_intersection(objects, ro, rv):
@@ -206,6 +281,10 @@ def ray_thing_intersection(objects, ro, rv):
             # find ray_plane_intersection
             plane_normal, plane_normal_point = get_plane_normal(object)
             all_thing_intersections += [ray_plane_intersection(ro, rd,plane_normal, plane_normal_point)]
+        if object["type"] == "triangle":
+            normal = get_triangle_normal(object)
+            all_thing_intersections += [ray_triangle_intersection(ro, rd, object["vertices"], normal)]
+        
         
     # get the object from the distance
     for thing_idx, t_thing in enumerate(all_thing_intersections):

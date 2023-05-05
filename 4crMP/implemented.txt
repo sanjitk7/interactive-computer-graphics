@@ -12,3 +12,5 @@ mpray_plane.txt
 mpray_shadow-bulb.txt
 mpray_shadow-suns.txt
 mpray_shadow-plane.txt
+mpray_trif.txt
+mpray_shadow-triangle.txt

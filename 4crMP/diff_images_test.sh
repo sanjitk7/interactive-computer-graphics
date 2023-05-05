@@ -15,5 +15,7 @@ python compareImages.py mpray_shadow-suns.png data/img/mpray_shadow-suns.png dif
 # python compareImages.py mpray_inside.png data/img/mpray_inside.png diffResult/mpray_inside
 python compareImages.py mpray_plane.png data/img/mpray_plane.png diffResult/mpray_plane
 python compareImages.py mpray_shadow-plane.png data/img/mpray_shadow-plane.png diffResult/mpray_shadow-plane
+python compareImages.py mpray_trif.png data/img/mpray_trif.png diffResult/mpray_trif
+python compareImages.py mpray_shadow-triangle.png data/img/mpray_shadow-triangle.png diffResult/mpray_shadow-triangle
 
 echo "\n**********Finish calculating pixel-wise diff**********n"
