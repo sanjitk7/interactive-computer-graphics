@@ -22,6 +22,7 @@ rm mpray_expose2.png
 rm mpray_eye.png
 rm mpray_forward.png
 rm mpray_up.png
+rm mpray_fisheye.png
 
 rm diffResult/*.png
 

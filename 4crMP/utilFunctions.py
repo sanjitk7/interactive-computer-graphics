@@ -6,7 +6,7 @@ from vectorUtils import norm, magnitude, normalize
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere","sun","color","bulb", "plane","xyz","trif", "expose", "eye","forward", "up"]
+    legal_command_start = ["png", "sphere","sun","color","bulb", "plane","xyz","trif", "expose", "eye","forward", "up", "fisheye"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -34,6 +34,7 @@ def initScene(commands):
     default_diffuse = np.array([1,1,1])
     default_shine = np.array([0,0,0])
     default_expose = None
+    fisheyeFlag = False
     
     for command in commands:
         
@@ -124,11 +125,14 @@ def initScene(commands):
             
         if command[0] == "up":
             default_up = np.array([float(command[1]),float(command[2]),float(command[3])])
+        
+        if command[0] == "fisheye":
+            fisheyeFlag = True
             
             
             
     
-    return image, objects, light_sources, light_bounces, default_expose, default_eye, default_forward, default_up, recent_open_image
+    return image, objects, light_sources, light_bounces, default_expose, default_eye, default_forward, default_up, fisheyeFlag, recent_open_image
         
 
 
@@ -326,3 +330,12 @@ def lamberts_law_illumination(object, light_diffuse, light_type, light_direction
 
 def exponentialExposure(l_linear, v):
     return np.array([1-math.exp(-l_linear[0]*v), 1-math.exp(-l_linear[1]*v),1-math.exp(-l_linear[2]*v)])
+
+def fisheyeDirection(sx, sy, origin, forward, up,right):
+    r = math.sqrt(math.pow(sx,2) + math.pow(sy,2))
+    if r > 1:
+        return origin
+    else:
+        new_forward = math.sqrt(1-math.pow(r,2))* forward
+        
+        return normalize(new_forward+ sx*right + sy*up)

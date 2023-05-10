@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 # utilFunctions
-from utilFunctions import get_commands_from_input, initScene,sRGB_to_linear,linear_to_sRGB, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination, exponentialExposure
+from utilFunctions import get_commands_from_input, initScene,sRGB_to_linear,linear_to_sRGB, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination, exponentialExposure, fisheyeDirection
 from vectorUtils import normalize, norm, make_perpendicular
 
 
@@ -40,7 +40,7 @@ if __name__=="__main__":
     
     
     # stage 1 - run through objects and initialize data structure to store them
-    image, objects, lights, light_bounces, exposeDegree, eye, forward, up, output_file_name = initScene(commands)
+    image, objects, lights, light_bounces, exposeDegree, eye, forward, up, fisheyeFlag, output_file_name = initScene(commands)
     
     
     # stage 2 - shoot, bounce and intersect rays for each pixel (from camera)
@@ -61,6 +61,8 @@ if __name__=="__main__":
     right = normalize(np.cross(forward, up))
     
     
+    # print("fisheye",fisheyeFlag)
+    
     # handle each light - ray emission
     for light_idx, light in enumerate(lights):
         # shoot ray at each pixel
@@ -75,6 +77,9 @@ if __name__=="__main__":
                 
                 # generate rays
                 ray_direction = normalize(forward+ sx*right + sy*up)
+                
+                if (fisheyeFlag):
+                    ray_direction = fisheyeDirection(sx,sy,origin,forward,up,right)
                 
                 # print("jiji",j,i)
                 current_color = (np.array(image.getpixel((j,i)))[:-1])/255
