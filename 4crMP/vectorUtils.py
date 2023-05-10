@@ -14,5 +14,8 @@ def magnitude(v):
 # def euc_dist(v1,v2):
 #     return  v1 ** 2 - v2 ** 2
 
-def reflected(vector, axis):
-    return vector - 2 * np.dot(vector, axis) * axis
+def make_perpendicular(movable_vector, referenece_vector):
+    fixed_perpendicular = normalize(np.cross(movable_vector, referenece_vector))
+    movable_vector = normalize(np.cross(referenece_vector, fixed_perpendicular))
+    
+    return movable_vector

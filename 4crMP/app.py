@@ -8,7 +8,7 @@ import math
 
 # utilFunctions
 from utilFunctions import get_commands_from_input, initScene,sRGB_to_linear,linear_to_sRGB, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination, exponentialExposure
-from vectorUtils import normalize, norm
+from vectorUtils import normalize, norm, make_perpendicular
 
 
 # global vars
@@ -40,7 +40,7 @@ if __name__=="__main__":
     
     
     # stage 1 - run through objects and initialize data structure to store them
-    image, objects, lights, light_bounces, exposeDegree, eye, output_file_name = initScene(commands)
+    image, objects, lights, light_bounces, exposeDegree, eye, forward, up, output_file_name = initScene(commands)
     
     
     # stage 2 - shoot, bounce and intersect rays for each pixel (from camera)
@@ -55,7 +55,10 @@ if __name__=="__main__":
     
     if len(lights) == 0:
         lights = default_lights
-
+    
+    # update the up and right vectors just in case forward was changed by command
+    up = make_perpendicular(up, forward)
+    right = normalize(np.cross(forward, up))
     
     
     # handle each light - ray emission

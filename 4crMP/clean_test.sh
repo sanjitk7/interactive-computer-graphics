@@ -19,6 +19,9 @@ rm mpray_trif.png
 rm mpray_shadow-triangle.png
 rm mpray_expose1.png
 rm mpray_expose2.png
+rm mpray_eye.png
+rm mpray_forward.png
+rm mpray_up.png
 
 rm diffResult/*.png
 

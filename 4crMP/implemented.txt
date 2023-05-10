@@ -16,3 +16,6 @@ mpray_trif.txt
 mpray_shadow-triangle.txt
 mpray_expose1.txt
 mpray_expose2.txt
+mpray_eye.txt
+mpray_forward.txt
+mpray_up.txt
