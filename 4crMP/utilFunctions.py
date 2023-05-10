@@ -6,7 +6,7 @@ from vectorUtils import norm, magnitude, normalize
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere","sun","color","bulb", "plane","xyz","trif"]
+    legal_command_start = ["png", "sphere","sun","color","bulb", "plane","xyz","trif", "expose"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -30,6 +30,7 @@ def initScene(commands):
     light_bounces = 4
     default_diffuse = np.array([1,1,1])
     default_shine = np.array([0,0,0])
+    default_expose = None
     
     for command in commands:
         
@@ -108,12 +109,14 @@ def initScene(commands):
             polygon_object["shine"] = default_shine
             
             objects.append(polygon_object)
+        if command[0] == "expose":
+            default_expose = float(command[1])
+            
             
             
     
-    return image, objects, light_sources, light_bounces, recent_open_image
+    return image, objects, light_sources, light_bounces, default_expose, recent_open_image
         
-
 
 
 # Gamma Correction:  LDisplay converted to LStorage
@@ -307,3 +310,6 @@ def lamberts_law_illumination(object, light_diffuse, light_type, light_direction
     if light_surf_dot > 0:
         return object["diffuse"] * light_diffuse * light_surf_dot * fall_off
     return 0
+
+def exponentialExposure(l_linear, v):
+    return np.array([1-math.exp(-l_linear[0]*v), 1-math.exp(-l_linear[1]*v),1-math.exp(-l_linear[2]*v)])

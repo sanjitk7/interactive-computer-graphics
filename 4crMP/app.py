@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 # utilFunctions
-from utilFunctions import get_commands_from_input, initScene,sRGB_to_linear,linear_to_sRGB, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination
+from utilFunctions import get_commands_from_input, initScene,sRGB_to_linear,linear_to_sRGB, ray_thing_intersection, get_object_normal,get_light_dir_dist, lamberts_law_illumination, exponentialExposure
 from vectorUtils import normalize, norm
 
 
@@ -31,7 +31,7 @@ if __name__=="__main__":
     commands = get_commands_from_input(f_path)
     
     # stage 1 - run through objects and initialize data structure to store them
-    image, objects, lights, light_bounces, output_file_name = initScene(commands)
+    image, objects, lights, light_bounces, exposeDegree, output_file_name = initScene(commands)
     
     # stage 2 - shoot, bounce and intersect rays for each pixel (from camera)
     width, height = image.size
@@ -134,6 +134,10 @@ if __name__=="__main__":
                         
                     if not ((final_color == np.zeros(3)).all() and not ray_interaction_occur):
                         output_color = current_color + np.array(final_color)
+                        
+                        if (exposeDegree):
+                            output_color = exponentialExposure(output_color, exposeDegree)
+                        
                         output_color = tuple(linear_to_sRGB(output_color)*255)
                         image.putpixel((j,i), tuple(np.append(output_color, [255]).astype(int)))
                     else:

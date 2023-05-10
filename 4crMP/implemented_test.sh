@@ -39,6 +39,9 @@ echo "\n-----------Running mpray_shadow-triangle-----------\n"
 make run file="data/txt/mpray_shadow-triangle.txt"
 # echo "\n-----------Running mpray_inside-----------\n"
 # make run file="data/txt/mpray_inside.txt"
+echo "\n-----------Running expose-----------\n"
+make run file="data/txt/mpray_expose1.txt"
+make run file="data/txt/mpray_expose2.txt"
 
 
 echo "\n-----------scipt finished!-----------"

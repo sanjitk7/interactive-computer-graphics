@@ -18,4 +18,7 @@ python compareImages.py mpray_shadow-plane.png data/img/mpray_shadow-plane.png d
 python compareImages.py mpray_trif.png data/img/mpray_trif.png diffResult/mpray_trif
 python compareImages.py mpray_shadow-triangle.png data/img/mpray_shadow-triangle.png diffResult/mpray_shadow-triangle
 
+python compareImages.py mpray_expose1.png data/img/mpray_expose1.png diffResult/mpray_expose1
+python compareImages.py mpray_expose2.png data/img/mpray_expose2.png diffResult/mpray_expose2
+
 echo "\n**********Finish calculating pixel-wise diff**********n"
