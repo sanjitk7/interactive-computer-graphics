@@ -30,8 +30,18 @@ if __name__=="__main__":
         
     commands = get_commands_from_input(f_path)
     
+    
+    
+    # default vectors
+    eye = np.array([0,0,0])
+    up = np.array([0,1,0])
+    forward = np.array([0,0,-1])
+    right = np.array([1,0,0])
+    
+    
     # stage 1 - run through objects and initialize data structure to store them
-    image, objects, lights, light_bounces, exposeDegree, output_file_name = initScene(commands)
+    image, objects, lights, light_bounces, exposeDegree, eye, output_file_name = initScene(commands)
+    
     
     # stage 2 - shoot, bounce and intersect rays for each pixel (from camera)
     width, height = image.size
@@ -46,11 +56,7 @@ if __name__=="__main__":
     if len(lights) == 0:
         lights = default_lights
 
-    # default vectors
-    eye = np.array([0,0,0])
-    up = np.array([0,1,0])
-    forward = np.array([0,0,-1])
-    right = np.array([1,0,0])
+    
     
     # handle each light - ray emission
     for light_idx, light in enumerate(lights):

@@ -6,7 +6,7 @@ from vectorUtils import norm, magnitude, normalize
 def get_commands_from_input(f_path):
     
      # get all commands from input file
-    legal_command_start = ["png", "sphere","sun","color","bulb", "plane","xyz","trif", "expose"]
+    legal_command_start = ["png", "sphere","sun","color","bulb", "plane","xyz","trif", "expose", "eye"]
     commands = []
     with open(f_path) as f:
         for line in f:
@@ -28,6 +28,7 @@ def initScene(commands):
     vertices = []
     image = None
     light_bounces = 4
+    default_eye = np.array([0,0,0])
     default_diffuse = np.array([1,1,1])
     default_shine = np.array([0,0,0])
     default_expose = None
@@ -109,13 +110,17 @@ def initScene(commands):
             polygon_object["shine"] = default_shine
             
             objects.append(polygon_object)
+        
         if command[0] == "expose":
             default_expose = float(command[1])
+            
+        if command[0] == "eye":
+            default_eye = np.array([float(command[1]),float(command[2]),float(command[3])])
             
             
             
     
-    return image, objects, light_sources, light_bounces, default_expose, recent_open_image
+    return image, objects, light_sources, light_bounces, default_expose, default_eye, recent_open_image
         
 
 
