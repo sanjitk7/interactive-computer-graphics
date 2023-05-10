@@ -64,18 +64,8 @@ function draw(milliseconds) {
 /** Compute any time-varying or animated aspects of the scene */
 function timeStep(milliseconds) {
 
-
-    // change by translating view coordinates on the left to move camera
+    window.v = m4view([1,5,3], [0,0,0], [0,1,0])
     
-    window.v = m4mul(
-        // m4rotX(pitch),
-        // m4rotY(yaw),
-        m4trans(window.x, window.y, window.z),
-        m4rotX(pitch),
-        m4rotY(yaw),
-        m4rotX(-0.4),
-        m4view([2,-5,5], [yaw,0,pitch], [0,1,0])
-    )
 
     draw()
     requestAnimationFrame(timeStep)
@@ -104,30 +94,13 @@ async function setup(event) {
         m4rotY(0.4), 
         m4rotX(Math.PI)
         )
-    window.m_Obj = m4mul(
-        m4rotY(0.4),
-        m4trans(-1,1,3)
-        )
+    
     window.initial_view = m4mul(
         m4rotX(-0.4),
         m4view([2,-5,5], [0,0,0], [0,1,0])
     )
     
-    // do terrain setup
-
-    // slices = 100
-    // resolution = 50
-
-    // land_plane_with_grid = computeTerrainGridTriangles(5, resolution)
-    // land_plane_with_faults = createRandomFaults(5, slices, land_plane_with_grid)
-    // addNormals(land_plane_with_faults)
-
-
-    // // add texture coordinates similar to normals
-    // addTexture(land_plane_with_faults)
-    // console.log("final land plane",land_plane_with_faults)
-    // window.geom = setupGeomery(land_plane_with_faults)
-
+    // do single sphere setup
     window.geom = setupGeomery(sphere_geom)
 
     fillScreen()
