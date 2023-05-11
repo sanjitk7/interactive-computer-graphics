@@ -1,21 +1,23 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 const FoggyBackground = new Float32Array([0.590088, 0.586554, 0.554753, 1])
 window.once = false
+window.twice = 0
+window.temp1 = 0
+window.temp2 = 0
+window.temp3 = 0
+window.temp4 = 0
 
 window.particles = []
 window.particleCount = 50
 
-/** Draw one frame */
+// SINGLE GEOMETRY APPROACH - render spheres
 function draw(milliseconds) {
     gl.clearColor(...FoggyBackground) // f(...[1,2,3]) means f(1,2,3)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-    
-    // set up stuff for particles
     gl.useProgram(program)
-
     gl.bindVertexArray(geom.vao)
-    // do diffuse lighting by default and specular if chosen
 
+    // general diffuse lighting
     let lightdir =  normalize([1,1,2])
     let halfway = normalize(add(lightdir, [0,0,0]))
 
@@ -23,7 +25,6 @@ function draw(milliseconds) {
     gl.uniform3fv(gl.getUniformLocation(program, 'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(program, 'lightcolor'), [1,1,1]) // white light
 
-    // console.log(window.count)
     for (let i=0; i<window.particleCount;i++){
         thisParticle = window.particles[i]
         // console.log("this particle", thisParticle)
@@ -34,11 +35,12 @@ function draw(milliseconds) {
         window.m2 = m4mul(m1,
             m4scale(scaleFactorByRadius,scaleFactorByRadius,scaleFactorByRadius)
             )
-        if (!once){
-            once = true
-            console.log("m1",m1)
-            // console.log("m2",m2)
-        }
+
+        // if (!once){
+        //     once = true
+        //     console.log("m1",m1)
+        //     // console.log("m2",m2)
+        // }
 
         
         gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m2))
@@ -59,9 +61,29 @@ function draw(milliseconds) {
 function timeStep(milliseconds) {
 
     window.v = m4view([1,5,3], [0,0,0], [0,1,0])
+    // initalize particles
+    // createInitialParticles(particleCount)
 
+    createInitialForces()
+    // if (twice<2){
+    //     ++twice
+    //     console.log(twice, ": forces at time",window.particles[4].otherForces) 
+    // }
 
+    // if (temp1<1){
+    //     for (let i=0;i<particleCount;i++){
+    //         console.log("forcees",window.particles[i].otherForces[0])
+    //     }
+    //     temp1++
+        
+    // }
+    
+    eulersMethod()
     draw()
+    // if (twice<2){
+    //     ++twice
+    //     console.log(twice, ": forces at time",window.particles[4].otherForces) 
+    // }
     requestAnimationFrame(timeStep)
 }
 
@@ -94,10 +116,11 @@ async function setup(event) {
         m4view([2,-5,5], [0,0,0], [0,1,0])
     )
     
-    
-    // initalize particles
     createInitialParticles(particleCount)
-    console.log("window.particles:",window.particles)
+    for (let i=0; i<window.particleCount;i++){
+        console.log("init setup: ",window.particles[i].velocity)  
+    }
+    // console.log("setup inital particle position and attributes: ",window.particles[4])
 
 
     // do single sphere setup
