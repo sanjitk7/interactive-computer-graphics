@@ -1,4 +1,5 @@
 
+// checking future timestep in eulers update and changing direction of velocity 
 function checkInvisibleBoxCollision(){
     console.log("INVISIBLE BOX COLLISION")
 
@@ -10,7 +11,7 @@ function checkInvisibleBoxCollision(){
         let nextZ = checkNextPositionBeforeUpdate[2]
 
         // change velocity direction to opposite direction with a elasticty coeifficient 
-        if (nextX > 4){
+        if (nextX > 5){
             let collision_direction = [-1,0,0]
             let sd = dot(thisParticle.velocity, collision_direction)
             let fixingFactor = -(1+window.elasticity)*sd
@@ -18,7 +19,7 @@ function checkInvisibleBoxCollision(){
             thisParticle.velocity = add(thisParticle.velocity, bounceVelocity)
             window.particles[k] = thisParticle
         }
-        if (nextX < -4){
+        if (nextX < -5){
             let collision_direction = [1,0,0]
             let sd = dot(thisParticle.velocity, collision_direction)
             let fixingFactor = -(1+window.elasticity)*sd
