@@ -92,27 +92,27 @@ function timeStep(milliseconds) {
 
     if (keysBeingPressed["w"]){
         console.log("move one step forward!")
-        window.z += 0.02
+        window.z += 0.07
     } else if (keysBeingPressed["s"]){
         console.log("move one step backward!")
-        window.z -= 0.02
+        window.z -= 0.07
     } else if (keysBeingPressed["a"]){
-        window.x += 0.02
+        window.x += 0.07
         console.log("move one step to the left!")
     } else if (keysBeingPressed["d"]){
-        window.x -= 0.02
+        window.x -= 0.07
         console.log("move one step to the right!")
     } else if (keysBeingPressed["ArrowUp"]){
-        window.pitch -= 0.007
+        window.pitch -= 0.01
         console.log("turn camera up!")
     } else if (keysBeingPressed["ArrowDown"]){
-        window.pitch += 0.007
+        window.pitch += 0.01
         console.log("turn camera down!")
     } else if (keysBeingPressed["ArrowLeft"]){
-        window.yaw += 0.007
+        window.yaw -= 0.01
         console.log("turn camera left!")
     } else if (keysBeingPressed["ArrowRight"]){
-        window.yaw -= 0.007
+        window.yaw += 0.01
         console.log("turn camera right!")
     }
 
@@ -120,10 +120,13 @@ function timeStep(milliseconds) {
     // change by translating view coordinates on the left to move camera
     
     window.v = m4mul(
+        // m4rotX(pitch),
+        // m4rotY(yaw),
         m4trans(window.x, window.y, window.z),
         m4rotX(pitch),
         m4rotY(yaw),
-        window.initial_view
+        m4rotX(-0.4),
+        m4view([2,-5,5], [yaw,0,pitch], [0,1,0])
     )
 
     draw()

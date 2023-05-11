@@ -1,4 +1,5 @@
 echo "\n**********Start calculating pixel-wise diff**********n"
+
 python compareImages.py mp1indexing.png data/img/mp1indexing.png diffResult/diffindexing
 python compareImages.py mp1req1.png data/img/mp1req1.png diffResult/diffreq1
 python compareImages.py mp1req2.png data/img/mp1req2.png diffResult/diffreq2
