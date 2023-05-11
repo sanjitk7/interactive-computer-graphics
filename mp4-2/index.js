@@ -35,13 +35,6 @@ function draw(milliseconds) {
         window.m2 = m4mul(m1,
             m4scale(scaleFactorByRadius,scaleFactorByRadius,scaleFactorByRadius)
             )
-
-        // if (!once){
-        //     once = true
-        //     console.log("m1",m1)
-        //     // console.log("m2",m2)
-        // }
-
         
         gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m2))
         gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
@@ -57,7 +50,7 @@ function draw(milliseconds) {
 }
 
 
-/** Compute any time-varying or animated aspects of the scene */
+// create physical forces and consume them via eulers method on repeat
 function timeStep(milliseconds) {
 
     if ((milliseconds/1000)%7 > 0 && (milliseconds/1000)%7 < 0.1){
@@ -92,14 +85,6 @@ function timeStep(milliseconds) {
     // if (twice<2){
     //     ++twice
     //     console.log(twice, ": forces at time",window.particles[4].otherForces) 
-    // }
-
-    // if (temp1<1){
-    //     for (let i=0;i<particleCount;i++){
-    //         console.log("forcees",window.particles[i].otherForces[0])
-    //     }
-    //     temp1++
-        
     // }
     
     eulersMethod()
