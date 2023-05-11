@@ -29,17 +29,19 @@ function draw(milliseconds) {
         // console.log("this particle", thisParticle)
         // console.log("this particle", thisParticle.radius)
         window.m1 = m4trans(thisParticle.position[0], thisParticle.position[1], thisParticle.position[2])
-        // window.m2 = mul(thisParticle.position[0], thisParticle.position[1], thisParticle.position[2],
-        //     // m4scale(thisParticle.radius)
-        //     m4scale(1)
-        //     )
-        // if (!once){
-        //     once = true
-        //     console.log(m1, m2)
-        // }
+
+        scaleFactorByRadius = 0.3*thisParticle.radius
+        window.m2 = m4mul(m1,
+            m4scale(scaleFactorByRadius,scaleFactorByRadius,scaleFactorByRadius)
+            )
+        if (!once){
+            once = true
+            console.log("m1",m1)
+            // console.log("m2",m2)
+        }
 
         
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m1))
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m2))
         gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
         gl.uniform4fv(gl.getUniformLocation(program, 'sphere_color'), thisParticle.color) // white light
         gl.drawElements(geom.mode, geom.count, geom.type, 0)
