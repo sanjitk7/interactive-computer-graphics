@@ -1,12 +1,12 @@
-window.gravity = [0,-0.005, 0]
-window.dragFactor = 0.05
+window.gravity = [0,-0.007, 0]
+window.dragFactor = 0.06
 window.timestep = 0.0007
+window.elasticity = 0.6
 
 function createInitialParticles(count/*, reInitForces*/){
     console.log("Initializing Particles")
     
     for (let i=0;i<window.particleCount;i++){
-        let new_particle = {}
         let radius = Math.random() * (3 - 1) + 1
         let position = [7*Math.random()-5,7*Math.random()-5,7*Math.random()-5]
         let velocity = mul([Math.random()-0.5,Math.random()-0.5,Math.random()-0.5], radius)

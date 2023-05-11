@@ -12,7 +12,7 @@ function fillScreen() {
     canvas.style.height = ''
     if (window.gl) {
         gl.viewport(0,0, canvas.width, canvas.height)
-        window.p = m4perspNegZ(0.1, 10, 1.5, canvas.width, canvas.height)
+        window.p = m4perspNegZ(1, 70, 1.5, canvas.width, canvas.height)
     }
 }
 

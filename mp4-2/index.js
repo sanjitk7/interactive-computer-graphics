@@ -1,12 +1,12 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
-const FoggyBackground = new Float32Array([0.590088, 0.586554, 0.554753, 1])
+const FoggyBackground = new Float32Array([0.15, 0.2, 0.18, 1])
 window.once = false
 window.twice = 0
 window.temp1 = 0
 window.temp2 = 0
 window.temp3 = 0
 window.temp4 = 0
-
+window.reset = false
 window.particles = []
 window.particleCount = 50
 
@@ -60,7 +60,31 @@ function draw(milliseconds) {
 /** Compute any time-varying or animated aspects of the scene */
 function timeStep(milliseconds) {
 
-    window.v = m4view([1,5,3], [0,0,0], [0,1,0])
+    if ((milliseconds/1000)%7 > 0 && (milliseconds/1000)%7 < 0.1){
+        console.log("reset!")
+        window.reset = true
+    }
+
+    if (window.reset){
+        console.log("reINIT!")
+        window.particles = []
+        createInitialParticles(particleCount)
+        window.reset = false
+    }
+
+    // window.v = m4view([Math.sin(milliseconds/1000),5,0], [0,0,0], [0,1,0])
+    // window.v = m4view([1,Math.sin(milliseconds/1000),0], [0,0,0], [0,1,0])
+    window.v = m4mul(
+        m4view([1,9,0], [0,0,0], [0,1,1]),
+        m4rotX(Math.PI/2),
+        m4trans(0,0,2)
+        )
+    window.m = m4mul(
+        m4trans(0,0,0)
+        )
+    
+    
+        
     // initalize particles
     // createInitialParticles(particleCount)
 
@@ -79,6 +103,7 @@ function timeStep(milliseconds) {
     // }
     
     eulersMethod()
+    checkInvisibleBoxCollision()
     draw()
     // if (twice<2){
     //     ++twice
@@ -105,16 +130,16 @@ async function setup(event) {
     
     
     // initial model matrices on render
-    window.m = m4mul(
-        m4trans(0,0,2),
-        m4rotY(0.4), 
-        m4rotX(Math.PI)
-        )
+    // window.m = m4mul(
+    //     m4trans(0,0,2),
+    //     m4rotY(0.4), 
+    //     m4rotX(Math.PI)
+    //     )
     
-    window.initial_view = m4mul(
-        m4rotX(-0.4),
-        m4view([2,-5,5], [0,0,0], [0,1,0])
-    )
+    // window.initial_view = m4mul(
+    //     m4rotX(-0.4),
+    //     m4view([2,-5,5], [0,0,0], [0,1,0])
+    // )
     
     createInitialParticles(particleCount)
     for (let i=0; i<window.particleCount;i++){
