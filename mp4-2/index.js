@@ -1,5 +1,6 @@
 const SomeGray = new Float32Array([0.09, 0.09, 0.09, 1])
 const FoggyBackground = new Float32Array([0.590088, 0.586554, 0.554753, 1])
+window.once = false
 
 window.particles = []
 window.particleCount = 50
@@ -26,14 +27,21 @@ function draw(milliseconds) {
     for (let i=0; i<window.particleCount;i++){
         thisParticle = window.particles[i]
         // console.log("this particle", thisParticle)
-        // console.log("this particle", thisParticle)
+        // console.log("this particle", thisParticle.radius)
         window.m1 = m4trans(thisParticle.position[0], thisParticle.position[1], thisParticle.position[2])
-        window.m2 = mul(window.m1,
-            m4scale(thisParticle.radius)
-            )
+        // window.m2 = mul(thisParticle.position[0], thisParticle.position[1], thisParticle.position[2],
+        //     // m4scale(thisParticle.radius)
+        //     m4scale(1)
+        //     )
+        // if (!once){
+        //     once = true
+        //     console.log(m1, m2)
+        // }
 
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m))
+        
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, 'mv'), false, m4mul(v,m1))
         gl.uniformMatrix4fv(gl.getUniformLocation(program, 'p'), false, p)
+        gl.uniform4fv(gl.getUniformLocation(program, 'sphere_color'), thisParticle.color) // white light
         gl.drawElements(geom.mode, geom.count, geom.type, 0)
     }
 

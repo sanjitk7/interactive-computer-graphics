@@ -3,10 +3,10 @@ function createInitialParticles(count){
     
     for (i=0;i<window.particleCount;i++){
         new_particle = {}
-        radius = Math.random() * (3 - 1) + 1
+        radius = Math.random() * (4 - 1) + 1
         position = [7*Math.random()-5,7*Math.random()-5,7*Math.random()-5]
         velocity = mul([Math.random()-0.3,Math.random()-0.3,Math.random()-0.3], radius)
-        color = [Math.random(), Math.random(), Math.random(),1]
+        color = [Math.random(), Math.random(), Math.random(),1.0]
         otherForces = []
 
         newParticle = {
