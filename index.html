@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <title>Computer Graphics Projects</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5; /* Background color: Light Grey */
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #ccc; /* Light Grey for the title */
+            font-family: 'Noto Sans', sans-serif;
+        }
+        section {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #dddedb;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .project-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff; /* White background for cards */
+            color: #333; /* Dark Grey text color */
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .project-card:hover {
+            background-color: #f0f0f0; /* Light Grey on hover */
+            transform: scale(1.05);
+        }
+        .project-link {
+            text-decoration: none;
+            color: #3498db; /* Blue for the project titles */
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .project-description {
+            margin-top: 10px;
+            color: #555; /* Slightly darker text color for descriptions */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Projects: Interactive Computer Graphics</h1>
+    </header>
+
+    <section>
+        <div class="project-card">
+            <a class="project-link" href="project1_demo.html" target="_blank">Rasterizer: DDA & Scanline Algorithms</a>
+            <p class="project-description">
+                A rasterizer that uses a .txt file as input and outputs a .png file. Implements DDA and Scanline algorithms, along with other algorithms for creating frustum, culling effects, and more.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <a class="project-link" href="project2_demo.html" target="_blank">WebGL Animation Effects via Shaders</a>
+            <p class="project-description">
+                A WebGL program that utilizes shaders for creating captivating animation effects. Explore the power of WebGL in generating visually stunning animations.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <a class="project-link" href="project3_demo.html" target="_blank">WebGL Terrain Modeling with Fractal</a>
+            <p class="project-description">
+                Delve into WebGL terrain modeling using a fracture-based fractal approach. Witness the creation of intricate landscapes through the power of WebGL.
+            </p>
+        </div>
+    </section>
+</body>
+</html>
