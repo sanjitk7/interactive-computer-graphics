@@ -14,7 +14,7 @@ void main() {
 
     vec3 n = normalize(fnormal);
     float lambert = max(dot(lightdir, n),0.0);
-    float blinn = pow(max(dot(-halfway, n), 0.0), 150.0);
+    float blinn = pow(max(dot(-halfway, n), 0.5), 150.0);
     vec4 currentColor = tempcolor;
 
 
@@ -34,7 +34,7 @@ void main() {
 
     // IF SPECULAR: adding blinn component for specularity of light if option is selected, else only do diffuse lighting
     if (useSpecular){
-        fragColor = vec4(currentColor.rgb * (lightcolor * lambert) + (lightcolor*blinn)*100.5, float(currentColor.a));
+        fragColor = vec4(currentColor.rgb * (lightcolor * lambert) + currentColor.rgb * (lightcolor*blinn)*100.5, float(currentColor.a));
     } else {
         fragColor = vec4(currentColor.rgb * (lightcolor * lambert), float(currentColor.a));
     }

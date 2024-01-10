@@ -1,6 +1,0 @@
-mpray_sphere.txt
-mpray_sun.txt
-mpray_behind.txt
-mpray_color.txt
-mpray_overlap.txt
-mpray_shadow-basic.txt

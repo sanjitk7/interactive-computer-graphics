@@ -64,23 +64,50 @@
 
     <section>
         <div class="project-card">
-            <a class="project-link" href="project1_demo.html" target="_blank">Rasterizer: DDA & Scanline Algorithms</a>
+            <a class="project-link" href="https://github.com/sanjitk7/InteractiveComputerGraphics/tree/main/mp1#readme" target="_blank">Rasterizer: DDA, Scanline Algorithms and more</a>
             <p class="project-description">
-                A rasterizer that uses a .txt file as input and outputs a .png file. Implements DDA and Scanline algorithms, along with other algorithms for creating frustum, culling effects, and more.
+                A simple bare bones rasterizer application written in Python that takes .txt files as input and creates corresponding .png image files using DDA/ Scanline algorithms and gamma correction to interpolate the pixels. The text files contain instructions to create an image - like positions of vertices, the colors etc.
             </p>
         </div>
 
         <div class="project-card">
-            <a class="project-link" href="project2_demo.html" target="_blank">WebGL Animation Effects via Shaders</a>
+            <a class="project-link" href="./mp2/index.html" target="_blank">WebGL Animation Effects via Shaders</a>
             <p class="project-description">
-                A WebGL program that utilizes shaders for creating captivating animation effects. Explore the power of WebGL in generating visually stunning animations.
+                Simple WebGL animations created by experimenting with vertex shader and fragment shader manipulations.
             </p>
         </div>
 
         <div class="project-card">
-            <a class="project-link" href="project3_demo.html" target="_blank">WebGL Terrain Modeling with Fractal</a>
+            <a class="project-link" href="./mp3/index.html" target="_blank">WebGL Terrain Modeling with Fractal</a>
             <p class="project-description">
-                Delve into WebGL terrain modeling using a fracture-based fractal approach. Witness the creation of intricate landscapes through the power of WebGL.
+            Generating a 3D Model of an arbitrary landscape terrain using random fault generation (aka the faulting method) and illumination via diffuse and specular lighting models. The simulation of generated terrain under severe weathering is tested via algorithmic spherical erosion.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <a class="project-link" href="./mp4/index.html" target="_blank">Flight Simulation and WebGL Textures</a>
+            <p class="project-description">
+                Uses random faulting to auto generate a texture-mapped terrain with a first person POV flight simulation (flight flying over the terrain) with user controlled camera movement.<br>
+                1.  arrow "up, down, left, right"  keys -> to rotate (turn) the camera for roll, pitch, yaw.<br>
+                2.  "W, A, S, D" keys -> to move the camera forwards, backwards, left and right. <br><br>
+            
+            Load and texture map an .OBJ file.<br>
+            
+            Toggle Fog (weather phenomenon) simulation via fragment shader - Using "F" key.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <a class="project-link" href="./mp5/burst.html" target="_blank">Particle Effects with WebGL</a>
+            <p class="project-description">
+                Simulation of physical particle effects - done via placing 50 spheres of varying mass rendered using a single sphere geometry withing an invisible bounding box in randomized locations, illuminated with diffuse lighting and move according to momentum, gravity and experience drag. The spheres experience collisions with the other spheres and the bounding box. The simulation resets every 20 seconds.
+            </p>
+        </div>
+        
+        <div class="project-card">
+            <a class="project-link" href="https://github.com/sanjitk7/InteractiveComputerGraphics/tree/main/4crMP#readme" target="_blank">Ray Tracer </a>
+            <p class="project-description">
+               A from the scratch, bare bones ray tracer application to create 3D imagery using ray tracing. It takes in .txt images similar to the rasterizer and produces images. The .txt files contain information about the scene (the location/size/shape/texture of the objects, the location and type of the light source etc) and trace light rays from the source to create objects, reflections and shadows to produce an image.
             </p>
         </div>
     </section>
