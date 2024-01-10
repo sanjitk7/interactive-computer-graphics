@@ -1,6 +1,6 @@
 ## Terrain and Geometry Modelling with WebGL
 
-View [demo](./index.html).
+View [demo](https://sanjitk7.github.io/InteractiveComputerGraphics/mp3/index.html).
 
 Generating a 3D Model of an arbitrary landscape terrain using random fault generation (aka the faulting method) via <i>[A Review of Digital Terrain Modeling. Eric Galin, Eric Guérin, Adrien Peytavie, et al](https://hal.science/hal-02097510/file/A%20Review%20of%20Digital%20Terrain%20Modeling.pdf)</i>.
 

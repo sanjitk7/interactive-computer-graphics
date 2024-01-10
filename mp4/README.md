@@ -1,6 +1,6 @@
 ## Flight Simulation and WebGL Textures
 
-View [demo](./index.html).
+View [demo](https://sanjitk7.github.io/InteractiveComputerGraphics/mp4/index.html).
 
 Uses random faulting to auto generate a texture-mapped terrain with a first person POV flight simulation (flight flying over the terrain) with user controlled camera movement.
     1.  arrow "up, down, left, right"  keys -> to rotate (turn) the camera for roll, pitch, yaw.
