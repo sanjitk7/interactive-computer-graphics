@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <title>Computer Graphics Projects</title>
     <style>
         body {
@@ -22,7 +22,7 @@
         }
         h1 {
             color: #ccc; /* Light Grey for the title */
-            font-family: 'Noto Sans', sans-serif;
+            font-family: 'Playfair', sans-serif;
         }
         section {
             max-width: 800px;
@@ -55,6 +55,21 @@
             margin-top: 10px;
             color: #555; /* Slightly darker text color for descriptions */
         }
+        .demo-button {
+            display: block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #3498db; /* Blue background for the demo button */
+            color: #fff; /* White text color */
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .demo-button:hover {
+            background-color: #217dbb; /* Darker blue on hover */
+        }
     </style>
 </head>
 <body>
@@ -68,20 +83,23 @@
             <p class="project-description">
                 A simple bare bones rasterizer application written in Python that takes .txt files as input and creates corresponding .png image files using DDA/ Scanline algorithms and gamma correction to interpolate the pixels. The text files contain instructions to create an image - like positions of vertices, the colors etc.
             </p>
+            <button class="demo-button" onclick="window.open('https://github.com/sanjitk7/InteractiveComputerGraphics/tree/main/mp1#readme', '_blank')">Go to project</button>
         </div>
 
         <div class="project-card">
-            <a class="project-link" href="./mp2/index.html" target="_blank">WebGL Animation Effects via Shaders</a>
+            <a class="project-link" href="https://github.com/sanjitk7/InteractiveComputerGraphics/tree/main/4crMP#readme" target="_blank">Ray Tracer </a>
             <p class="project-description">
-                Simple WebGL animations created by experimenting with vertex shader and fragment shader manipulations.
+                A from the scratch, bare bones ray tracer application to create 3D imagery using ray tracing. It takes in .txt images similar to the rasterizer and produces images. The .txt files contain information about the scene (the location/size/shape/texture of the objects, the location and type of the light source etc) and trace light rays from the source to create objects, reflections and shadows to produce an image.
             </p>
+            <button class="demo-button" onclick="window.open('https://github.com/sanjitk7/InteractiveComputerGraphics/tree/main/4crMP#readme')">Go to Project</button>
         </div>
 
         <div class="project-card">
             <a class="project-link" href="./mp3/index.html" target="_blank">WebGL Terrain Modeling with Fractal</a>
             <p class="project-description">
-            Generating a 3D Model of an arbitrary landscape terrain using random fault generation (aka the faulting method) and illumination via diffuse and specular lighting models. The simulation of generated terrain under severe weathering is tested via algorithmic spherical erosion.
+                Generating a 3D Model of an arbitrary landscape terrain using random fault generation (aka the faulting method) and illumination via diffuse and specular lighting models. The simulation of generated terrain under severe weathering is tested via algorithmic spherical erosion.
             </p>
+            <button class="demo-button" onclick="window.open('./mp3/index.html', '_blank')">Demo</button>
         </div>
 
         <div class="project-card">
@@ -95,21 +113,27 @@
             
             Toggle Fog (weather phenomenon) simulation via fragment shader - Using "F" key.
             </p>
+            <button class="demo-button" onclick="window.open('./mp4/index.html', '_blank')">Demo</button>
         </div>
 
         <div class="project-card">
             <a class="project-link" href="./mp5/burst.html" target="_blank">Particle Effects with WebGL</a>
             <p class="project-description">
-                Simulation of physical particle effects - done via placing 50 spheres of varying mass rendered using a single sphere geometry withing an invisible bounding box in randomized locations, illuminated with diffuse lighting and move according to momentum, gravity and experience drag. The spheres experience collisions with the other spheres and the bounding box. The simulation resets every 20 seconds.
+                Simulation of physical particle effects - done via placing 50 spheres of varying mass rendered using a single sphere geometry withing an invisible bounding box in randomized locations, illuminated with diffuse lighting and move according to momentum, gravity and experience drag. The spheres experience collisions with the other spheres and the bounding box. The simulation resets every 10 seconds.
             </p>
+            <button class="demo-button" onclick="window.open('./mp5/burst.html', '_blank')">Demo</button>
         </div>
-        
+
+
         <div class="project-card">
-            <a class="project-link" href="https://github.com/sanjitk7/InteractiveComputerGraphics/tree/main/4crMP#readme" target="_blank">Ray Tracer </a>
+            <a class="project-link" href="./mp2/index.html" target="_blank">WebGL Animation Effects via Shaders</a>
             <p class="project-description">
-               A from the scratch, bare bones ray tracer application to create 3D imagery using ray tracing. It takes in .txt images similar to the rasterizer and produces images. The .txt files contain information about the scene (the location/size/shape/texture of the objects, the location and type of the light source etc) and trace light rays from the source to create objects, reflections and shadows to produce an image.
+                Simple WebGL animations created by experimenting with vertex shader and fragment shader manipulations.
             </p>
+            <button class="demo-button" onclick="window.open('https://demo-link-for-project-2.com', '_blank')">Demo</button>
         </div>
+
+
     </section>
 </body>
 </html>
